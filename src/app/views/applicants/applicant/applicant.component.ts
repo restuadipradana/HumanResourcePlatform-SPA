@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+import { Subject } from 'rxjs';
+import { DataTableDirective } from 'angular-datatables';
 
 import { ApplicantService } from '../../../core/_services/applicant.service';
 import { HApplicantSearch } from '../../../core/_models/h-applicant-search';
@@ -13,27 +12,75 @@ import { TApplicant } from '../../../core/_models/t-applicant';
   templateUrl: './applicant.component.html',
   styleUrls: ['./applicant.component.scss']
 })
-export class ApplicantComponent implements OnInit {
+export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  items = [];
 
   searchModel: any = {}
-
+  applicantList: TApplicant[] = []
   srcChip = []
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
+  @ViewChild(DataTableDirective, {static: false})
+  dtElement: DataTableDirective;
 
-  constructor() { }
+  //dtTrigger: Subject = new Subject();
+
+  constructor(private toastr: ToastrService, private _applicantSvc: ApplicantService) { }
 
   ngOnInit(): void {
+    console.log("1st", this.applicantList);
+    this.dtOptions = {
+      pagingType: 'full_numbers',
+      pageLength: 10,
+      searching: false
+    };
 
+  }
+
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  ngOnDestroy(): void {
+    // Do not forget to unsubscribe the event
+    this.dtTrigger.unsubscribe();
+  }
+
+  rerender(): void {
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      // Destroy the table first
+      dtInstance.destroy();
+      // Call the dtTrigger to rerender again
+      this.dtTrigger.next();
+    });
   }
 
   search() {
     if (Object.keys(this.searchModel).length === 0)
     {
-      console.log("koso ")
+      this.toastr.warning('Please fill search field at least one field!', 'All field empty!');
+    }
+    else {
+      this._applicantSvc.getApplicantList(this.searchModel).subscribe(
+        (res: any) => {
+          this.applicantList = res;
+          this.rerender()
+
+          console.log(this.applicantList);
+        },
+        (error) => {
+          console.log("Error: " , error.error.text);
+        }
+      );
     }
     console.log(this.searchModel)
   }
+
+
+
+
+
+
 
   check() {
     this.srcChip = []
@@ -50,6 +97,9 @@ export class ApplicantComponent implements OnInit {
         break
       case 'id_no':
         delete this.searchModel.id_no
+        break
+      case 'tel_hp':
+        delete this.searchModel.tel_hp
         break
       case 'applyDate_from':
         delete this.searchModel.applyDate_from

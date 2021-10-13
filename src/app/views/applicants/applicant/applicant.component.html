@@ -26,6 +26,12 @@
                       </div>
                     </div>
                     <div class="form-group row">
+                      <label class="col-md-4 col-form-label" for="no_hp" style="text-align: right;"><b>Telephone (HP)</b></label>
+                      <div class="col-md-4">
+                        <input type="text" id="no_hp" name="no_hp" class="form-control" [(ngModel)]="searchModel.tel_hp" (keyup)=" check()">
+                      </div>
+                    </div>
+                    <div class="form-group row">
                       <label class="col-md-4 col-form-label" for="apldate" style="text-align: right;"><b>Apply Date</b></label>
                       <div class="col-md-4">
                         <div class="input-group input-daterange">
@@ -116,9 +122,57 @@
             </div>
           </div>
           <hr>
+          <div style="overflow:auto;" >
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th style="width: 40px;">No. </th>
+                  <th style="width: 200px;">ID No.</th>
+                  <th >Name</th>
+                  <th  style="width: 15%;">Telp. No.</th>
+                  <th style="width: 13%;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let person of applicantList;let indexOfelement=index">
+                  <td>{{ indexOfelement+1 }}</td>
+                  <td>{{ person.ktp }}</td>
+                  <td>{{ person.name }}</td>
+                  <td>{{ person.tel_hp }}</td>
+                  <td>
+                    <div class="btn-group" dropdown>
+                      <button dropdownToggle type="button" class="btn btn-ghost-primary dropdownToggle" tooltip="Option">
+                        <i class="icon-options"></i><span class="caret"></span>
+                      </button>
+                      <ul *dropdownMenu class="dropdown-menu" role="menu">
+                        <li role="menuitem"><a class="dropdown-item" href="#">Download CV</a></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Download KTP</a></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Download KK</a></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Download Photo</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <button type="button" class="btn btn-ghost-primary" tooltip="Organize"><i class="icon-note"></i></button>
+                    <button type="button" class="btn btn-ghost-primary" tooltip="View CV"><i class="icon-doc"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody *ngIf="applicantList?.length == 0">
+                <tr>
+                  <td colspan="3" class="no-data-available">No data!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngIf="applicantList?.length != 0">
+            <div class="col text-center">
+              <button type="button" class="btn  btn-success" >Download Excel</button>
+            </div>
+          </div>
         </div>
       </div>
     </div><!--/.col-->
   </div>
+
 
 </div>

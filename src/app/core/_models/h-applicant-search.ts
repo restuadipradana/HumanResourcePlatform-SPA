@@ -7,6 +7,7 @@ export class HApplicantSearch {
   marital: number
   education: number
   experience: number
+  tel_hp: string
 
 
 }

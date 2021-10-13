@@ -7,6 +7,9 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 
+import { ToastrModule } from 'ngx-toastr';
+import { HttpClientModule} from '@angular/common/http'
+
 import { IconModule, IconSetModule, IconSetService } from '@coreui/icons-angular';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -45,6 +48,7 @@ import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   imports: [
+    HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
@@ -59,6 +63,13 @@ import { ChartsModule } from 'ng2-charts';
     ChartsModule,
     IconModule,
     IconSetModule.forRoot(),
+    ToastrModule.forRoot({
+      positionClass :'toast-top-center',
+      preventDuplicates: true,
+      progressBar: true,
+      tapToDismiss: true,
+      resetTimeoutOnDuplicate: true
+    }),
   ],
   declarations: [
     AppComponent,

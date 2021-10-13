@@ -14,6 +14,7 @@ export class ApplicantService {
   constructor(private http: HttpClient) { }
 
   getApplicantList(search: HApplicantSearch) {
+    console.log("search", search)
     return this.http.post(this.baseUrl + 'applicant/search', search);
   }
 
