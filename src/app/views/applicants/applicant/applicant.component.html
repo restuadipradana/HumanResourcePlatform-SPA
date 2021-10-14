@@ -152,8 +152,8 @@
                         </li>
                       </ul>
                     </div>
-                    <button type="button" class="btn btn-ghost-primary" tooltip="Organize"><i class="icon-note"></i></button>
-                    <button type="button" class="btn btn-ghost-primary" tooltip="View CV"><i class="icon-doc"></i></button>
+                    <button type="button" class="btn btn-ghost-primary" tooltip="Edit" (click)="openModal(templatew, person.id)"><i class="icon-note"></i></button>
+                    <button type="button" class="btn btn-ghost-primary" tooltip="View CV" (click)="openPDF(person.id)"><i class="icon-doc"></i></button>
                   </td>
                 </tr>
               </tbody>
@@ -166,13 +166,73 @@
           </div>
           <div *ngIf="applicantList?.length != 0">
             <div class="col text-center">
-              <button type="button" class="btn  btn-success" >Download Excel</button>
+              <button type="button" class="btn  btn-success" (click)="exportExcel()">Download Excel</button>
             </div>
           </div>
         </div>
       </div>
     </div><!--/.col-->
   </div>
-
-
 </div>
+
+<ng-template #templatew>
+  <div class="modal-header">
+    <h5 class="modal-title pull-left">{{person.name}}</h5>
+    <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="modalOption(2, cfm)">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="form-group col-sm-4">
+        <label for="ktp">ID No</label>
+        <input type="text" [(ngModel)]="person.ktp" class="form-control" id="ktp" disabled>
+      </div>
+      <div class="form-group col-sm-8">
+        <label for="name">Name</label>
+        <input type="text" [(ngModel)]="person.name" class="form-control" id="name">
+      </div>
+    </div><!--/.row-->
+    <div class="row">
+      <div class="form-group col-sm-4">
+        <label for="nik">NIK</label>
+        <input type="text" class="form-control" id="nik">
+      </div>
+      <div class="form-group col-sm-4">
+        <label for="tmb">TMB</label>
+        <input type="date" class="form-control" id="tmb">
+      </div>
+      <div class="form-group col-sm-4">
+        <label for="probation">End Probation</label>
+        <input type="date" class="form-control" id="probation">
+      </div>
+    </div><!--/.row-->
+    <hr>
+    <div class="row">
+      <label class="col-md-3 col-form-label" for="agrmn">Agreement Contract</label>
+      <div class="col-md-9">
+        <input type="file" id="agrmn" name="agrmn">
+      </div>
+    </div><!--/.row-->
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modalOption(2, cfm)">Close</button>
+    <button type="button" class="btn btn-primary" (click)="modalOption(3)">Save changes</button>
+  </div>
+</ng-template>
+
+<ng-template #cfm>
+  <div class="modal-header">
+    <h4 class="modal-title">Are you sure?</h4>
+    <button type="button" class="close" (click)="modalOption(1)" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>All changes made will not be saved&hellip;</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-warning" (click)="modalOption(0)">Yes</button>
+    <button type="button" class="btn btn-secondary" (click)="modalOption(1)">No</button>
+  </div>
+</ng-template>

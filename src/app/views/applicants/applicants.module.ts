@@ -8,6 +8,7 @@ import { DataTablesModule } from 'angular-datatables';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { IconModule } from '@coreui/icons-angular';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { ApplicantsRoutingModule } from './applicants-routing.module';
 import { ApplicantComponent } from './applicant/applicant.component';
@@ -27,7 +28,8 @@ import { ApplicantComponent } from './applicant/applicant.component';
     ReactiveFormsModule,
     BsDropdownModule.forRoot(),
     IconModule,
-    TooltipModule.forRoot()
+    TooltipModule.forRoot(),
+    ModalModule.forRoot()
   ]
 })
 export class ApplicantsModule { }

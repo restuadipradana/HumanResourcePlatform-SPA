@@ -8,6 +8,7 @@ import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 
 import { ToastrModule } from 'ngx-toastr';
+import { NgxSpinnerModule } from "ngx-spinner";
 import { HttpClientModule} from '@angular/common/http'
 
 import { IconModule, IconSetModule, IconSetService } from '@coreui/icons-angular';
@@ -45,6 +46,7 @@ import { AppRoutingModule } from './app.routing';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ChartsModule } from 'ng2-charts';
+import { PdfViewComponent } from './views/pdf-view/pdf-view.component';
 
 @NgModule({
   imports: [
@@ -70,6 +72,7 @@ import { ChartsModule } from 'ng2-charts';
       tapToDismiss: true,
       resetTimeoutOnDuplicate: true
     }),
+    NgxSpinnerModule,
   ],
   declarations: [
     AppComponent,
@@ -77,7 +80,8 @@ import { ChartsModule } from 'ng2-charts';
     P404Component,
     P500Component,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    PdfViewComponent
   ],
   providers: [
     {

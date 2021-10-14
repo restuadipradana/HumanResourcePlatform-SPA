@@ -1,7 +1,10 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, TemplateRef } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
+import { NgxSpinnerService } from "ngx-spinner";
+import {ModalDirective, BsModalService, BsModalRef} from 'ngx-bootstrap/modal';
+import { Router } from '@angular/router';
 
 import { ApplicantService } from '../../../core/_services/applicant.service';
 import { HApplicantSearch } from '../../../core/_models/h-applicant-search';
@@ -14,9 +17,24 @@ import { TApplicant } from '../../../core/_models/t-applicant';
 })
 export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  config = {
+    backdrop: true,
+    ignoreBackdropClick: true,
+    keyboard: false,
+    class: 'modal-lg'
+  };
+  cfmconfig = {
+    backdrop: true,
+    ignoreBackdropClick: false,
+    keyboard: true,
+    class: 'modal-sm modal-warning'
+  };
+  modalRef?: BsModalRef;
+  cfmmodalRef?: BsModalRef;
 
   searchModel: any = {}
   applicantList: TApplicant[] = []
+  person: any={}
   srcChip = []
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
@@ -25,7 +43,11 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
 
   //dtTrigger: Subject = new Subject();
 
-  constructor(private toastr: ToastrService, private _applicantSvc: ApplicantService) { }
+  constructor(private toastr: ToastrService,
+              private _applicantSvc: ApplicantService,
+              private spinner: NgxSpinnerService,
+              private modalService: BsModalService,
+              private router: Router) { }
 
   ngOnInit(): void {
     console.log("1st", this.applicantList);
@@ -61,27 +83,97 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toastr.warning('Please fill search field at least one field!', 'All field empty!');
     }
     else {
+      this.spinner.show()
       this._applicantSvc.getApplicantList(this.searchModel).subscribe(
         (res: any) => {
           this.applicantList = res;
           this.rerender()
 
           console.log(this.applicantList);
+          this.spinner.hide()
         },
         (error) => {
           console.log("Error: " , error.error.text);
+          this.spinner.hide()
         }
       );
     }
     console.log(this.searchModel)
   }
 
+  exportExcel() {
+    if (Object.keys(this.searchModel).length === 0)
+    {
+      this.toastr.warning('Please fill search field at least one field!', 'All field empty!');
+    }
+    else {
+      this._applicantSvc.esportExcel(this.searchModel)
+        .subscribe((result: Blob) => {
+          if (result.type !== 'application/xlsx') {
+            alert(result.type);
+          }
+          const blob = new Blob([result]);
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          const currentTime = new Date();
+          const filename = 'Applicant'  + '.xlsx';
+          link.href = url;
+          link.setAttribute('download', filename);
+          document.body.appendChild(link);
+          link.click();
+      });
+    }
+  }
+
+  getPerson(id: string) {
+    this._applicantSvc.getPerson(id).subscribe(
+      (res: any) => {
+        this.person = {}
+        this.person = res;
+
+        console.log(this.person);
+      },
+      (error) => {
+        console.log("Error: " , error.error.text);
+      }
+    );
+  }
+
+  openPDF(id: number) {
+    window.open('/#/pdf/' + id,'name','width=800,height=700')
+    //this.router.navigate(['/pdf/'+id.toString()]);
+  }
+
+
+/* -------------- MODAL ENGINE BEGIN ------------------ */
+  modalOption(whatclose: number, template?: TemplateRef<any>) {
+    switch(whatclose) {
+      case 0: //confirm close yes
+        this.modalRef?.hide()
+        this.cfmmodalRef?.hide()
+        break
+      case 1: //confirm close no
+        this.cfmmodalRef?.hide()
+        break
+      case 2: //open confirm
+        this.cfmmodalRef = this.modalService.show(template, this.cfmconfig)
+        break
+      case 3: //main modal close
+        this.modalRef?.hide()
+    }
+  }
+
+  openModal(template: TemplateRef<any>, id: number) {
+    this.modalRef = this.modalService.show(template, this.config);
+    this.getPerson(id.toString())
+    console.log(id.toString())
+  }
+
+/* -------------- MODAL ENGINE END ------------------ */
 
 
 
-
-
-
+/* -------------- CHIP ENGINE BEGIN ------------------ */
   check() {
     this.srcChip = []
     Object.entries(this.searchModel).forEach(([key, val]) => {
@@ -165,6 +257,8 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
     result = name.join(' ')
     return result
   }
+
+  /* -------------- CHIP ENGINE END ------------------ */
 
 
 }

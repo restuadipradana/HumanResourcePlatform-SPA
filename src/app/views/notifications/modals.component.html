@@ -7,6 +7,9 @@
         </div>
         <div class="card-body">
           <!-- Button trigger modal -->
+          <button type="button" class="btn btn-secondary mr-1" data-toggle="modal" (click)="openModal(templatew)">
+            Launch templatew modal
+          </button>
           <button type="button" class="btn btn-secondary mr-1" data-toggle="modal" (click)="myModal.show()">
             Launch demo modal
           </button>
@@ -37,6 +40,38 @@
     </div><!--/.col-->
   </div><!--/.row-->
 </div>
+
+<ng-template #templatew>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="modalOption(2, cfm)">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    Just a modal with a bunch of words inside, nothing serious.
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modalOption(2, cfm)">Close</button>
+    <button type="button" class="btn btn-primary" (click)="modalOption(3)">Save changes</button>
+  </div>
+</ng-template>
+
+<ng-template #cfm>
+  <div class="modal-header">
+    <h4 class="modal-title">Are you sure?</h4>
+    <button type="button" class="close" (click)="modalOption(1)" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>All changes made will not be saved&hellip;</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-warning" (click)="modalOption(0)">Yes</button>
+    <button type="button" class="btn btn-secondary" (click)="modalOption(1)">No</button>
+  </div>
+</ng-template>
 
 <div bsModal #myModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
