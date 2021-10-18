@@ -145,7 +145,7 @@
                         <i class="icon-options"></i><span class="caret"></span>
                       </button>
                       <ul *dropdownMenu class="dropdown-menu" role="menu">
-                        <li role="menuitem"><a class="dropdown-item" href="#">Download CV</a></li>
+                        <li role="menuitem"><a class="dropdown-item"  (click)="generatePDF(person.id, 'download')">Download CV</a></li>
                         <li role="menuitem"><a class="dropdown-item" href="#">Download KTP</a></li>
                         <li role="menuitem"><a class="dropdown-item" href="#">Download KK</a></li>
                         <li role="menuitem"><a class="dropdown-item" href="#">Download Photo</a>
@@ -153,7 +153,7 @@
                       </ul>
                     </div>
                     <button type="button" class="btn btn-ghost-primary" tooltip="Edit" (click)="openModal(templatew, person.id)"><i class="icon-note"></i></button>
-                    <button type="button" class="btn btn-ghost-primary" tooltip="View CV" (click)="openPDF(person.id)"><i class="icon-doc"></i></button>
+                    <button type="button" class="btn btn-ghost-primary" tooltip="View CV" (click)="generatePDF(person.id)"><i class="icon-doc"></i></button>
                   </td>
                 </tr>
               </tbody>

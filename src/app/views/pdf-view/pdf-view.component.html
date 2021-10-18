@@ -1,286 +1,289 @@
 <p>{{person.name}}</p>
-<br />
+<div>
+  <input type="button" value="CPTURE" (click)="generatePDF()"/>
+</div>
+<div class="container" id="content" #content>
   <h1 align='center'>PT.Tah Sung Hung</h1><h2 align='center'> Curriculum Vitae </h2>
-    <p align="center">Apply date:{{ person.apply_date | date: "yyyy/MM/dd"}}</p>
-    <br />
-    <div class="row">
-        <div style="padding:0 15px;display:inline-block;width:15%;float:right;text-align:center">
-            foto<!--<img src="~/Storage/Applicant/image/@(Model.id + ". " + Model.name.Trim() + ".png")" width="100" height="150" />-->
-        </div>
+  <p align="center">Apply date:{{ person.apply_date | date: "yyyy/MM/dd"}}</p>
+  <br />
+  <div class="row">
+      <div style="padding:0 15px;display:inline-block;width:15%;float:right;text-align:center">
+          foto<!--<img src="~/Storage/Applicant/image/@(Model.id + ". " + Model.name.Trim() + ".png")" width="100" height="150" />-->
+      </div>
 
-        <div style="padding:0 15px;display:inline-block;width:85%;height:30px">
-            <table width="100%" class="table table-bordered">
-                <tr class="bg-grey">
-                    <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;"><b>SEEKING FOR JOB</b></td>
-                </tr>
+      <div style="padding:0 15px;display:inline-block;width:85%;height:30px">
+          <table width="100%" class="table table-bordered">
+              <tr class="bg-grey">
+                  <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;"><b>SEEKING FOR JOB</b></td>
+              </tr>
 
-                <tr>
-                    <th>Salary</th>
-                    <td>{{person.salary}} <!--@( Model.salary == 0 ? "Company Requirements" : Model.country.currency + string.Format("{0:n0}", Model.salary) )--> </td>
-                </tr>
-                <tr>
-                    <th>Occupations</th>
-                    <td> <!--
-                        @foreach (var item in Model.occupations)
-                        {
-                            <span class="comma">
-                                @item.name
+              <tr>
+                  <th>Salary</th>
+                  <td>{{person.salary}} <!--@( Model.salary == 0 ? "Company Requirements" : Model.country.currency + string.Format("{0:n0}", Model.salary) )--> </td>
+              </tr>
+              <tr>
+                  <th>Occupations</th>
+                  <td> <!--
+                      @foreach (var item in Model.occupations)
+                      {
+                          <span class="comma">
+                              @item.name
 
-                                @if (item.parent > 0)
-                                {
-                                    @( "(" +  item.occupation_parent.name + ")")
-                                }
+                              @if (item.parent > 0)
+                              {
+                                  @( "(" +  item.occupation_parent.name + ")")
+                              }
 
-                            </span>
-                        }
-                          -->
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
+                          </span>
+                      }
+                        -->
+                  </td>
+              </tr>
+          </table>
+      </div>
+  </div>
 
-    <table width="100%"  class="table table-bordered">
-        <tr class="bg-grey">
-            <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif; "><b>PERSONAL IDENTITY</b></td>
-        </tr>
-        <tr>
-            <th>Name</th>
-            <td>{{person.name}}</td>
-            <th>ID No.</th>
-            <td>{{person.ktp}}</td>
-            <th>Gender</th>
-            <td>{{person.gender}}</td>
-        </tr>
-        <tr>
-            <th>Birthday</th>
-            <td>{{person.birthday | date: "yyyy/MM/dd"}}</td>
-            <th>Place of Birth</th>
-            <td>{{person.birthplace.name}} </td>
-            <th>Religion </th>
-            <td>{{person.religion}}
-              <!--@{
+  <table width="100%"  class="table table-bordered">
+      <tr class="bg-grey">
+          <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif; "><b>PERSONAL IDENTITY</b></td>
+      </tr>
+      <tr>
+          <th>Name</th>
+          <td>{{person.name}}</td>
+          <th>ID No.</th>
+          <td>{{person.ktp}}</td>
+          <th>Gender</th>
+          <td>{{person.gender}}</td>
+      </tr>
+      <tr>
+          <th>Birthday</th>
+          <td>{{person.birthday | date: "yyyy/MM/dd"}}</td>
+          <th>Place of Birth</th>
+          <td>{{person.birthplace.name}} </td>
+          <th>Religion </th>
+          <td>{{person.religion}}
+            <!--@{
 
-                    var religion_name = "";
+                  var religion_name = "";
 
-                    switch (Model.religion)
-                    {
-                        case 1:
-                            religion_name = "Islam";
-                            break;
-                        case 2:
-                            religion_name = "Buddha";
-                            break;
-                        case 3:
-                            religion_name = "Protestant";
-                            break;
-                        case 4:
-                            religion_name = "Confucius";
-                            break;
-                        case 5:
-                            religion_name = "Hindu";
-                            break;
-                        case 6:
-                            religion_name = "Catholic";
-                            break;
-                        case 7:
-                            religion_name = "Others";
-                            break;
-                    }
-                }
-                @religion_name--></td>
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td>{{person.email}} </td>
-            <th>No. Telephone</th>
-            <td>{{person.tel_hp}}</td>
-            <th>Reference</th>
-            <td>{{person.refrence}}</td>
-        </tr>
-        <tr>
-            <th>Current Address</th>
-            <td colspan="3">{{person.address}}</td>
-            <th>Nationality</th>
-            <td colspan="3">{{person.national.name}} </td>
-        </tr>
-        <tr>
-            <th>Marital Status</th>
-            <td>{{person.marital}} <!--@(Model.marital == 1 ? "Single" : "Married")--></td>
-            <th>NPWP</th>
-            <td>{{person.npwp}}</td>
-            <th>Dependent</th>
-            <td>{{person.dependent}}</td>
-        </tr>
-    </table>
+                  switch (Model.religion)
+                  {
+                      case 1:
+                          religion_name = "Islam";
+                          break;
+                      case 2:
+                          religion_name = "Buddha";
+                          break;
+                      case 3:
+                          religion_name = "Protestant";
+                          break;
+                      case 4:
+                          religion_name = "Confucius";
+                          break;
+                      case 5:
+                          religion_name = "Hindu";
+                          break;
+                      case 6:
+                          religion_name = "Catholic";
+                          break;
+                      case 7:
+                          religion_name = "Others";
+                          break;
+                  }
+              }
+              @religion_name--></td>
+      </tr>
+      <tr>
+          <th>Email</th>
+          <td>{{person.email}} </td>
+          <th>No. Telephone</th>
+          <td>{{person.tel_hp}}</td>
+          <th>Reference</th>
+          <td>{{person.refrence}}</td>
+      </tr>
+      <tr>
+          <th>Current Address</th>
+          <td colspan="3">{{person.address}}</td>
+          <th>Nationality</th>
+          <td colspan="3">{{person.national.name}} </td>
+      </tr>
+      <tr>
+          <th>Marital Status</th>
+          <td>{{person.marital}} <!--@(Model.marital == 1 ? "Single" : "Married")--></td>
+          <th>NPWP</th>
+          <td>{{person.npwp}}</td>
+          <th>Dependent</th>
+          <td>{{person.dependent}}</td>
+      </tr>
+  </table>
 
-    <table width="100%" class="table table-bordered">
-        <tr class="bg-grey">
-            <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif; "><b>FAMILY</b></td>
-        </tr>
-        <tr>
-            <th>
-                Relation
-            </th>
-            <th>Name</th>
-            <th>Age</th>
-            <th>Job</th>
-            <th>
-                Emergency Contact
-            </th>
-            <th>
-                Telephone
-            </th>
-        </tr>
-        <!--@foreach (var item in Model.connections)
-            {
-            <tr v-for="item in detail.connections">
-                <td>@(Global.getNiceValue("relation", item.relation)) </td>
-                <td>@item.name</td>
-                <td>@item.age</td>
-                <td>@item.job</td>
-                <td>@( item.emergency == 1 ? "Yes" : "No")</td>
-                <td>@item.telephone</td>
-            </tr>
-        } -->
-    </table>
+  <table width="100%" class="table table-bordered">
+      <tr class="bg-grey">
+          <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif; "><b>FAMILY</b></td>
+      </tr>
+      <tr>
+          <th>
+              Relation
+          </th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Job</th>
+          <th>
+              Emergency Contact
+          </th>
+          <th>
+              Telephone
+          </th>
+      </tr>
+      <!--@foreach (var item in Model.connections)
+          {
+          <tr v-for="item in detail.connections">
+              <td>@(Global.getNiceValue("relation", item.relation)) </td>
+              <td>@item.name</td>
+              <td>@item.age</td>
+              <td>@item.job</td>
+              <td>@( item.emergency == 1 ? "Yes" : "No")</td>
+              <td>@item.telephone</td>
+          </tr>
+      } -->
+  </table>
 
-    <table width="100%" class="table table-bordered">
-        <tr class="bg-grey">
-            <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;"><b>EDUCATION</b></td>
-        </tr>
-        <tr>
-            <th>Degree</th>
-            <th>School Name</th>
-            <th>Major</th>
-            <th>Time</th>
-            <th>
-                Graduated
-            </th>
-        </tr>
-        <!--@foreach (var item in Model.educations)
-        {
-            <tr v-for="item in detail.educations">
-                <td> @(Global.getNiceValue("degree", item.type)) </td>
-                <td> @item.school_name </td>
-                <td> @(item.major == null ? "-" : item.major.name )</td>
-                <td> @item.begin  -  @item.end </td>
-                <td> @(item.graduated == 1 ? "Yes" : "No")  </td>
-            </tr>
-        }-->
-    </table>
+  <table width="100%" class="table table-bordered">
+      <tr class="bg-grey">
+          <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;"><b>EDUCATION</b></td>
+      </tr>
+      <tr>
+          <th>Degree</th>
+          <th>School Name</th>
+          <th>Major</th>
+          <th>Time</th>
+          <th>
+              Graduated
+          </th>
+      </tr>
+      <!--@foreach (var item in Model.educations)
+      {
+          <tr v-for="item in detail.educations">
+              <td> @(Global.getNiceValue("degree", item.type)) </td>
+              <td> @item.school_name </td>
+              <td> @(item.major == null ? "-" : item.major.name )</td>
+              <td> @item.begin  -  @item.end </td>
+              <td> @(item.graduated == 1 ? "Yes" : "No")  </td>
+          </tr>
+      }-->
+  </table>
 
-    <table width="100%" class="table table-bordered">
-        <tr class="bg-grey">
-            <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;"><b>SKILLS</b></td>
-        </tr>
-        <tr>
-            <th> Office </th>
-            <th> Language </th>
-            <th> Others </th>
-        </tr>
-        <tr>
-            <td>
-                <!--@foreach (var item in Model.officeSkills)
-                {
-                    <span class="comma"> @item.skill.name</span>
-                }-->
-            </td>
-            <td> <!--
-                @foreach (var item in Model.languageSkills)
-                {
-                    <span class="comma"> @item.skill.name (@item.skill.remark.Trim())</span>
-                }-->
-            </td>
-            <td> <!--
-                @foreach (var item in Model.othersSkills)
-                {
-                    <span class="comma"> @item.skill.name</span>
-                }-->
-            </td>
-        </tr>
-    </table>
+  <table width="100%" class="table table-bordered">
+      <tr class="bg-grey">
+          <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;"><b>SKILLS</b></td>
+      </tr>
+      <tr>
+          <th> Office </th>
+          <th> Language </th>
+          <th> Others </th>
+      </tr>
+      <tr>
+          <td>
+              <!--@foreach (var item in Model.officeSkills)
+              {
+                  <span class="comma"> @item.skill.name</span>
+              }-->
+          </td>
+          <td> <!--
+              @foreach (var item in Model.languageSkills)
+              {
+                  <span class="comma"> @item.skill.name (@item.skill.remark.Trim())</span>
+              }-->
+          </td>
+          <td> <!--
+              @foreach (var item in Model.othersSkills)
+              {
+                  <span class="comma"> @item.skill.name</span>
+              }-->
+          </td>
+      </tr>
+  </table>
 <!--
-    <table width="100%" class="table table-bordered">
-        @{ var i = 0; }
-        @if (ViewBag.Message != null)
-        {
-            <tr class="bg-grey">
-                <td colspan="9" align="center">@ViewBag.Message</td>
-            </tr>
-        }
-        else
-        {
-            <tr class="bg-grey">
-                <td colspan="9" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;"><b>WORKING EXPERIENCE</b></td>
-            </tr>
-        }
+  <table width="100%" class="table table-bordered">
+      @{ var i = 0; }
+      @if (ViewBag.Message != null)
+      {
+          <tr class="bg-grey">
+              <td colspan="9" align="center">@ViewBag.Message</td>
+          </tr>
+      }
+      else
+      {
+          <tr class="bg-grey">
+              <td colspan="9" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;"><b>WORKING EXPERIENCE</b></td>
+          </tr>
+      }
 
-        @foreach (var item in Model.experiences)
-        {
-            <tbody>
-                <tr>
-                    <td class="valign-middle" valign="middle" align="center" rowspan="4">
-                        @if (i == 0)
-                        {
-                            <span>
-                                Current Job<br> (The Latest)
-                            </span>
+      @foreach (var item in Model.experiences)
+      {
+          <tbody>
+              <tr>
+                  <td class="valign-middle" valign="middle" align="center" rowspan="4">
+                      @if (i == 0)
+                      {
+                          <span>
+                              Current Job<br> (The Latest)
+                          </span>
 
-                            i = i + 1;
-                        }
-                        else
-                        {
-                            <span>
-                                @i
-                            </span>
-                        }
-                    </td>
-                    <th>Company Name </th>
-                    <td> @item.company_name </td>
-                    <th>Time</th>
-                    <td> @item.begin  - @item.end</td>
-                    <th>Resign Reason </th>
-                    <td> @item.resign_reason </td>
-                </tr>
-                <tr>
-                    <th>Salary </th>
-                    <td> @(item.salary == 0 ? "" : item.country.currency) @string.Format("{0:n0}", item.salary)  </td>
-                    <th>Working Location</th>
-                    <td> @(item.location == null ? "-" : item.location.name ) </td>
-                    <th>Confrim To </th>
-                    <td> @item.confirm_to </td>
-                </tr>
-                <tr>
-                    <th>Ocupation</th>
-                    <td>@(item.occupation == null ? "-" : item.occupation.name )</td>
-                    <th>Job Responsibility </th>
-                    <td> @( Global.getNiceValue("management_responsibility", item.management_responsibility) == "" ? "-" : Global.getNiceValue("management_responsibility", item.management_responsibility) )</td>
-                    <th>Company Size</th>
-                    <td> @( Global.getNiceValue("company_size", Convert.ToByte(item.company_size)) )</td>
-                </tr>
-            </tbody>
-            i = i + 1;
-        }
-    </table>
+                          i = i + 1;
+                      }
+                      else
+                      {
+                          <span>
+                              @i
+                          </span>
+                      }
+                  </td>
+                  <th>Company Name </th>
+                  <td> @item.company_name </td>
+                  <th>Time</th>
+                  <td> @item.begin  - @item.end</td>
+                  <th>Resign Reason </th>
+                  <td> @item.resign_reason </td>
+              </tr>
+              <tr>
+                  <th>Salary </th>
+                  <td> @(item.salary == 0 ? "" : item.country.currency) @string.Format("{0:n0}", item.salary)  </td>
+                  <th>Working Location</th>
+                  <td> @(item.location == null ? "-" : item.location.name ) </td>
+                  <th>Confrim To </th>
+                  <td> @item.confirm_to </td>
+              </tr>
+              <tr>
+                  <th>Ocupation</th>
+                  <td>@(item.occupation == null ? "-" : item.occupation.name )</td>
+                  <th>Job Responsibility </th>
+                  <td> @( Global.getNiceValue("management_responsibility", item.management_responsibility) == "" ? "-" : Global.getNiceValue("management_responsibility", item.management_responsibility) )</td>
+                  <th>Company Size</th>
+                  <td> @( Global.getNiceValue("company_size", Convert.ToByte(item.company_size)) )</td>
+              </tr>
+          </tbody>
+          i = i + 1;
+      }
+  </table>
 
 -->
 
-    <table width="100%" class="table table-bordered">
-        <tr class="bg-grey">
-            <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;"><b>DECLARATION</b></td>
-        </tr>
-        <tr>
-            <th>
-                I declare that the information data in this application is true and accurate. I understand that any misrepresentation of
-                facts given here in with be sufficient cause of dismissal from the companys' service if I have been employed
-            </th>
-            <td>
-                <input type="checkbox" name="declaration" value="true" checked>
-        </tr>
+  <table width="100%" class="table table-bordered">
+      <tr class="bg-grey">
+          <td colspan="6" align="center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;"><b>DECLARATION</b></td>
+      </tr>
+      <tr>
+          <th>
+              I declare that the information data in this application is true and accurate. I understand that any misrepresentation of
+              facts given here in with be sufficient cause of dismissal from the companys' service if I have been employed
+          </th>
+          <td>
+              <input type="checkbox" name="declaration" value="true" checked>
+      </tr>
 
-    </table>
+  </table>
 
-    <p class="breakhere"> </p>
-
+  <p class="breakhere"> </p>
+</div>
 
