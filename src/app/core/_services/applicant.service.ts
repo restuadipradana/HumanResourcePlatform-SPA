@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpParams, HttpRequest } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from './../../../environments/environment';
@@ -25,5 +25,33 @@ export class ApplicantService {
   getPerson(id: string){
     return this.http.get<any>(this.baseUrl + 'applicant/person', {params : {id:id}})
   }
+
+  async getImgStat(url: string){
+    return this.http.get<any>(url, {}).toPromise();
+  }
+
+  getImage(imageUrl: string): Observable<Blob> {
+    return this.http.get(imageUrl, { responseType: 'blob' })
+  }
+
+  // checkImageExist(url: string) {
+  //   return this.http.request(new Request(url))
+  //           .map((res: Response) => {
+  //               if (res) {
+  //                   if (res.status === 201) {
+  //                       return [{ status: res.status, json: res }]
+  //                   }
+  //                   else if (res.status === 200) {
+  //                       return [{ status: res.status, json: res }]
+  //                   }
+  //               }
+  //           }).catch((error: any) => {
+  //               if (error.status < 400 ||  error.status ===500) {
+  //                   return Observable.throw(new Error(error.status));
+  //               }
+  //           })
+  //           .subscribe(res => {...},
+  //                      err => {console.log(err)} );
+  // }
 
 }

@@ -5,11 +5,12 @@ import { DataTableDirective } from 'angular-datatables';
 import { NgxSpinnerService } from "ngx-spinner";
 import {ModalDirective, BsModalService, BsModalRef} from 'ngx-bootstrap/modal';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
-import html2canvas from 'html2canvas';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import imageToBase64 from 'image-to-base64/browser'
 
 import { ApplicantService } from '../../../core/_services/applicant.service';
 import { HApplicantSearch } from '../../../core/_models/h-applicant-search';
@@ -17,6 +18,8 @@ import { TApplicant } from '../../../core/_models/t-applicant';
 import { TApplicantConnection } from '../../../core/_models/t-applicant-connection';
 import { TEducation } from '../../../core/_models/t-education';
 import { TApplicantSkill } from '../../../core/_models/t-applicantskill';
+import { retry } from 'rxjs/operators';
+import { kill } from 'process';
 
 @Component({
   selector: 'app-applicant',
@@ -53,6 +56,8 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
   dtTrigger: Subject<any> = new Subject<any>();
   @ViewChild(DataTableDirective, {static: false})
   dtElement: DataTableDirective;
+
+  urlFoto: any = environment.photoUrl
 
   constructor(private toastr: ToastrService,
               private _applicantSvc: ApplicantService,
@@ -117,6 +122,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toastr.warning('Please fill search field at least one field!', 'All field empty!');
     }
     else {
+      this.spinner.show()
       this._applicantSvc.esportExcel(this.searchModel)
         .subscribe((result: Blob) => {
           if (result.type !== 'application/xlsx') {
@@ -131,6 +137,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
           link.setAttribute('download', filename);
           document.body.appendChild(link);
           link.click();
+          this.spinner.hide()
       });
     }
   }
@@ -154,263 +161,355 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
   generatePDF(id: string, action: string) {
     this._applicantSvc.getPerson(id).subscribe(
       (res: any) => {
-        this.person = {}
-        this.applicantConnection = []
-        this.applicantEducation = []
-        this.person = res;
-        var religion_name = "";
-        this.applicantConnection = this.person.connections
-        this.applicantEducation = this.person.educations
-        this.officeSkill = this.person.officeSkills
-        this.languageSkill = this.person.languageSkills
-        this.otherSkill = this.person.othersSkills
-        let officeskl = ''
-        officeskl = this.officeSkill.map(val => officeskl + val.skill.name.trim()).toString()
-        let langskl = ''
-        langskl = this.languageSkill.map(val => langskl + val.skill.name.trim() + '(' + val.skill.remark.trim() + ')').toString()
-        let otherskl = ''
-        otherskl = this.otherSkill.map(val => otherskl + val.skill.name.trim()).toString()
-        switch (this.person.religion)
-        {
-            case 1:
-                religion_name = "Islam";
-                break;
-            case 2:
-                religion_name = "Buddha";
-                break;
-            case 3:
-                religion_name = "Protestant";
-                break;
-            case 4:
-                religion_name = "Confucius";
-                break;
-            case 5:
-                religion_name = "Hindu";
-                break;
-            case 6:
-                religion_name = "Catholic";
-                break;
-            case 7:
-                religion_name = "Others";
-                break;
-        }
-        let docDefinition = {
-          info: {
-            title: this.person.id + ' ' + this.person.name.trim(),
-            author: 'HRP',
-            subject: 'CV',
-            keywords: 'nokeyword',
-          },
-          header: [
-            {
-              text: [
-                { text: 'PT. Tah Sung Hung\n', fontSize: 20, alignment: 'center', color: '#2e2e2e' },
-                { text: 'Curriculum Vitae', fontSize: 16, alignment: 'center', color: '#2e2e2e' },
-              ] ,
-            },
-          ],
-          content: [
-            {
-              text: 'Apply Date: ' + new Date(this.person.apply_date).toLocaleDateString(),
-              fontSize: 7,
-              alignment: 'center'
-            },
-            {
-              columns: [
-                {
-                  width: '80%',
-                  table: {
-                    headerRows: 1,
-                    widths: ['40%', '60%'],
-                    body: [
-                      [{text: 'SEEKING FOR JOB', colSpan: 2, style: 'sectionHeader', bold: true}, {}],
-                      [{text: 'Soonest working date', style: 'sectionContent', bold: true}, {text: new Date(this.person.soonest_working_date).toLocaleDateString(), style: 'sectionContent'}],
-                      [{text: 'Salary', style: 'sectionContent', bold: true}, {text: this.person.salary === 0 ? 'Company Requirements' : this.person.country.currency + this.person.salary, style: 'sectionContent'}]
-                    ]
-                  }
-                },
-                {
-                  width: '20%',
-                  text: 'Foto'
-                }
-              ],
-              // optional space between columns
-              columnGap: 1
-            },
-            {
-              text: ' ',
-              fontSize: 15,
-            },
-            {
-              table: {
-                headerRows: 1,
-                widths: ['15%', '25%', '13%', '21%', '12%', '14%'], // -2
-                body: [
-                  [{text: 'PERSONAL IDENTITY', colSpan: 6, style: 'sectionHeader', bold: true}, {}, {}, {}, {}, {}],
-                  [
-                    {text: 'Name', style: 'sectionContent', bold: true},
-                    {text: this.person.name, style: 'sectionContent'},
-                    {text: 'ID No.', style: 'sectionContent', bold: true},
-                    {text: this.person.ktp, style: 'sectionContent'},
-                    {text: 'Gender', style: 'sectionContent', bold: true},
-                    {text: this.person.gender === 1 ? 'Male' : 'Female', style: 'sectionContent'}
-                  ],
-                  [
-                    {text: 'Birthday', style: 'sectionContent', bold: true},
-                    {text: new Date(this.person.birthday).toLocaleDateString(), style: 'sectionContent'},
-                    {text: 'Place of Birth', style: 'sectionContent', bold: true},
-                    {text: this.person.birthplace.name, style: 'sectionContent'},
-                    {text: 'Religion', style: 'sectionContent', bold: true},
-                    {text: religion_name, style: 'sectionContent'}
-                  ],
-                  [
-                    {text: 'Email', style: 'sectionContent', bold: true},
-                    {text: this.person.email, style: 'sectionContent'},
-                    {text: 'No. Telephone', style: 'sectionContent', bold: true},
-                    {text: this.person.tel_hp, style: 'sectionContent'},
-                    {text: 'Refrence', style: 'sectionContent', bold: true},
-                    {text: this.person.reference, style: 'sectionContent'}
-                  ],
-                  [
-                    {text: 'Current Address', style: 'sectionContent', bold: true},
-                    {text: this.person.address, style: 'sectionContent',  colSpan: 3},
-                    {},
-                    {},
-                    {text: 'Nationality', style: 'sectionContent', bold: true},
-                    {text: this.person.national.name, style: 'sectionContent'}
-                  ],
-                  [
-                    {text: 'Marital Status', style: 'sectionContent', bold: true},
-                    {text: this.person.marital  === 1 ? "Single" : "Married", style: 'sectionContent'},
-                    {text: 'NPWP', style: 'sectionContent', bold: true},
-                    {text: this.person.npwp, style: 'sectionContent'},
-                    {text: 'Dependent', style: 'sectionContent', bold: true},
-                    {text: this.person.dependent, style: 'sectionContent'}
-                  ],
-                ]
-              }
-            },
-            {
-              text: ' ',
-              fontSize: 15,
-            },
-            {
-              table: {
-                headerRows: 1,
-                widths: ['10%', '25%', '8%', '22%', '19%', '16%'], //
-                body: [
-                  [{text: 'FAMILY', colSpan: 6, style: 'sectionHeader', bold: true}, {}, {}, {}, {}, {}],
-                  [
-                    {text: 'Relation', style: 'sectionContent', bold: true},
-                    {text: 'Name', style: 'sectionContent', bold: true},
-                    {text: 'Age', style: 'sectionContent', bold: true},
-                    {text: 'Job', style: 'sectionContent', bold: true},
-                    {text: 'Emergency Contact', style: 'sectionContent', bold: true},
-                    {text: 'Telephone', style: 'sectionContent', bold: true},
-                  ],
-                  ...this.applicantConnection.map(p => (
-                    [
-                      {text: this.getNiceValue('relation', p.relation) , style: 'sectionContent'},
-                      {text: p.name, style: 'sectionContent'},
-                      {text: p.age, style: 'sectionContent'},
-                      {text: p.job, style: 'sectionContent'},
-                      {text: p.emergency === 1 ? "Yes" : "No", style: 'sectionContent'},
-                      {text: p.telephone, style: 'sectionContent'}
-                    ]))
-                ]
-              }
-            },
-            {
-              text: ' ',
-              fontSize: 15,
-            },
-            {
-              table: {
-                headerRows: 1,
-                widths: ['15%', '35%', '25%', '16%', '9%'], // EDUCATION tinggak bikin model Education trus di map
-                body: [
-                  [{text: 'EDUCATION', colSpan: 5, style: 'sectionHeader', bold: true}, {}, {}, {}, {}],
-                  [
-                    {text: 'Degree', style: 'sectionContent', bold: true},
-                    {text: 'School Name', style: 'sectionContent', bold: true},
-                    {text: 'Major', style: 'sectionContent', bold: true},
-                    {text: 'Time', style: 'sectionContent', bold: true},
-                    {text: 'Graduated', style: 'sectionContent', bold: true},
-                  ],
-                  ...this.applicantEducation.map(p => (
-                    [
-                      {text: this.getNiceValue('degree', p.type) , style: 'sectionContent'},
-                      {text: p.school_name, style: 'sectionContent'},
-                      {text: p.major_name, style: 'sectionContent'},
-                      {text: p.begin + ' - ' + p.end, style: 'sectionContent'},
-                      {text: p.graduated === 1 ? "Yes" : "No", style: 'sectionContent'}
-                    ]))
-                ]
-              }
-            },
-            {
-              text: ' ',
-              fontSize: 15,
-            },
-            {
-              table: {
-                headerRows: 1,
-                widths: ['40%', '40%', '20%'],
-                body: [
-                  [{text: 'SKILL', colSpan: 3, style: 'sectionHeader', bold: true}, {}, {}],
-                  [
-                    {text: 'Office', style: 'sectionContent', bold: true},
-                    {text: 'Language', style: 'sectionContent', bold: true},
-                    {text: 'Others', style: 'sectionContent', bold: true},
-                  ],
-                  [
-                    {text: officeskl , style: 'sectionContent'},
-                    {text: langskl, style: 'sectionContent'},
-                    {text: otherskl, style: 'sectionContent'},
-                  ]
-                ]
-              }
-            },
-            {
-              text: 'INVOICE',
-              fontSize: 14,
-              bold: true,
-              alignment: 'right',
-              color: '#2e2e2e'
-            }
-          ],
-          styles: {
-            sectionHeader: {
-              bold: true,
-              fontSize: 11,
-              alignment: 'center',
-              fillColor: '#757474',
-              color: '#ededed'
-            },
-            sectionContent: {
-              bold: false,
-              fontSize: 9,
-              //margin: [0, 15,0, 15]
-            }
-          },
-          // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
-          pageMargins: [ 10, 46, 10, 10 ],
+        this.showPdf(res, action)
 
-        };
-
-        if(action==='download'){
-          pdfMake.createPdf(docDefinition).download(this.person.id + ' ' + this.person.name.trim())
-        }else{
-          var win = window.open('' + 'ehhehe' ,'name','width=800,height=700')
-          pdfMake.createPdf(docDefinition).open({}, win)
-        }
-
-      },
+      }, //end of http request
       (error) => {
         this.toastr.error('Failed to open CV :(', 'Oops.. Something wrong..!');
         console.log("Error: " , error.error.text);
       }
     )
+  }
+
+  async showPdf(res: any, action: string) {
+    this.person = {}
+    this.applicantConnection = []
+    this.applicantEducation = []
+    this.person = res;
+    var religion_name = "";
+    this.applicantConnection = this.person.connections
+    this.applicantEducation = this.person.educations
+    this.officeSkill = this.person.officeSkills
+    this.languageSkill = this.person.languageSkills
+    this.otherSkill = this.person.othersSkills
+    let officeskl = ''
+    officeskl = this.officeSkill.map(val => officeskl + val.skill.name.trim()).toString()
+    let langskl = ''
+    langskl = this.languageSkill.map(val => langskl + val.skill.name.trim() + '(' + val.skill.remark.trim() + ')').toString()
+    let otherskl = ''
+    otherskl = this.otherSkill.map(val => otherskl + val.skill.name.trim()).toString()
+
+    this.urlFoto = environment.photoUrl
+    let nama = this.person.name.trim().replace(/ /g, '%20')
+    let expectPhoto = this.urlFoto + this.person.id + '.%20' + nama + '.png'
+    this.urlFoto = expectPhoto
+    var imagex =  await this.getBase64ImageFromURL(environment.photoUrl + 'notfound.png')
+
+    await this._applicantSvc.getImgStat(this.urlFoto).then(
+      () => {
+      },
+      async (error) => {
+        if (error.status == 200) {
+          imagex =  await this.getBase64ImageFromURL(this.urlFoto)
+        }
+      }
+    )
+
+
+
+    switch (this.person.religion)
+    {
+      case 1:
+          religion_name = "Islam";
+          break;
+      case 2:
+          religion_name = "Buddha";
+          break;
+      case 3:
+          religion_name = "Protestant";
+          break;
+      case 4:
+          religion_name = "Confucius";
+          break;
+      case 5:
+          religion_name = "Hindu";
+          break;
+      case 6:
+          religion_name = "Catholic";
+          break;
+      case 7:
+          religion_name = "Others";
+          break;
+    }
+    let docDefinition = {
+      info: {
+        title: this.person.id + ' ' + this.person.name.trim(),
+        author: 'HRP',
+        subject: 'CV',
+        keywords: 'nokeyword',
+      },
+      header: [
+        {
+          text: [
+            { text: 'PT. Tah Sung Hung\n', fontSize: 20, alignment: 'center', color: '#2e2e2e' },
+            { text: 'Curriculum Vitae', fontSize: 16, alignment: 'center', color: '#2e2e2e' },
+          ] ,
+        },
+      ],
+      footer: {
+        columns: [
+          '',//left
+          { text: 'TSH8137 (05/05/2020)', alignment: 'right' }
+        ]
+      },
+      content: [
+        {
+          text: 'Apply Date: ' + new Date(this.person.apply_date).toLocaleDateString(),
+          fontSize: 7,
+          alignment: 'center'
+        },
+        {
+          columns: [
+            {
+              width: '85%',
+              table: {
+                headerRows: 1,
+                widths: ['40%', '60%'],
+                body: [
+                  [{text: 'SEEKING FOR JOB', colSpan: 2, style: 'sectionHeader', bold: true}, {}],
+                  [{text: 'Soonest working date', style: 'sectionContent', bold: true}, {text: new Date(this.person.soonest_working_date).toLocaleDateString(), style: 'sectionContent'}],
+                  [{text: 'Salary', style: 'sectionContent', bold: true}, {text: this.person.salary === 0 ? 'Company Requirements' : this.person.country.currency + this.person.salary, style: 'sectionContent'}]
+                ]
+              }
+            },
+            {
+              width: '15%',
+              table: {
+                headerRows: 1,
+                widths: ['100%'],
+                body: [
+                  [{image:  imagex , fit: [85, 100], alignment: 'center',}],
+                  [{text: '0000', style: 'sectionContent'}],
+                  [{text: '01/01/2001', style: 'sectionContent'}],
+                ]
+              }
+              //text: 'Foroo'
+
+              //image: this.imgToBase64(this.urlFoto),
+
+              // height: 200
+            }
+          ],
+          // optional space between columns
+          columnGap: 10
+        },
+        {
+          text: ' ',
+          fontSize: 15,
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['14%', '27%', '12%', '21%', '12%', '14%'], // -2
+            body: [
+              [{text: 'PERSONAL IDENTITY', colSpan: 6, style: 'sectionHeader', bold: true}, {}, {}, {}, {}, {}],
+              [
+                {text: 'Name', style: 'sectionContent', bold: true},
+                {text: this.person.name, style: 'sectionContent'},
+                {text: 'ID No.', style: 'sectionContent', bold: true},
+                {text: this.person.ktp, style: 'sectionContent'},
+                {text: 'Gender', style: 'sectionContent', bold: true},
+                {text: this.person.gender === 1 ? 'Male' : 'Female', style: 'sectionContent'}
+              ],
+              [
+                {text: 'Birthday', style: 'sectionContent', bold: true},
+                {text: new Date(this.person.birthday).toLocaleDateString(), style: 'sectionContent'},
+                {text: 'Place of Birth', style: 'sectionContent', bold: true},
+                {text: this.person.birthplace.name, style: 'sectionContent'},
+                {text: 'Religion', style: 'sectionContent', bold: true},
+                {text: religion_name, style: 'sectionContent'}
+              ],
+              [
+                {text: 'Email', style: 'sectionContent', bold: true},
+                {text: this.person.email, style: 'sectionContent'},
+                {text: 'No. Telephone', style: 'sectionContent', bold: true},
+                {text: this.person.tel_hp, style: 'sectionContent'},
+                {text: 'Refrence', style: 'sectionContent', bold: true},
+                {text: this.person.reference, style: 'sectionContent'}
+              ],
+              [
+                {text: 'Current Address', style: 'sectionContent', bold: true},
+                {text: this.person.address, style: 'sectionContent',  colSpan: 3},
+                {},
+                {},
+                {text: 'Nationality', style: 'sectionContent', bold: true},
+                {text: this.person.national.name, style: 'sectionContent'}
+              ],
+              [
+                {text: 'Marital Status', style: 'sectionContent', bold: true},
+                {text: this.person.marital  === 1 ? "Single" : "Married", style: 'sectionContent'},
+                {text: 'NPWP', style: 'sectionContent', bold: true},
+                {text: this.person.npwp, style: 'sectionContent'},
+                {text: 'Dependent', style: 'sectionContent', bold: true},
+                {text: this.person.dependent, style: 'sectionContent'}
+              ],
+            ]
+          }
+        },
+        {
+          text: ' ',
+          fontSize: 15,
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['10%', '25%', '8%', '22%', '19%', '16%'], //
+            body: [
+              [{text: 'FAMILY', colSpan: 6, style: 'sectionHeader', bold: true}, {}, {}, {}, {}, {}],
+              [
+                {text: 'Relation', style: 'sectionContent', bold: true},
+                {text: 'Name', style: 'sectionContent', bold: true},
+                {text: 'Age', style: 'sectionContent', bold: true},
+                {text: 'Job', style: 'sectionContent', bold: true},
+                {text: 'Emergency Contact', style: 'sectionContent', bold: true},
+                {text: 'Telephone', style: 'sectionContent', bold: true},
+              ],
+              ...this.applicantConnection.map(p => (
+                [
+                  {text: this.getNiceValue('relation', p.relation) , style: 'sectionContent'},
+                  {text: p.name, style: 'sectionContent'},
+                  {text: p.age, style: 'sectionContent'},
+                  {text: p.job, style: 'sectionContent'},
+                  {text: p.emergency === 1 ? "Yes" : "No", style: 'sectionContent'},
+                  {text: p.telephone, style: 'sectionContent'}
+                ]))
+            ]
+          }
+        },
+        {
+          text: ' ',
+          fontSize: 15,
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['15%', '35%', '25%', '16%', '9%'], // EDUCATION tinggak bikin model Education trus di map
+            body: [
+              [{text: 'EDUCATION', colSpan: 5, style: 'sectionHeader', bold: true}, {}, {}, {}, {}],
+              [
+                {text: 'Degree', style: 'sectionContent', bold: true},
+                {text: 'School Name', style: 'sectionContent', bold: true},
+                {text: 'Major', style: 'sectionContent', bold: true},
+                {text: 'Time', style: 'sectionContent', bold: true},
+                {text: 'Graduated', style: 'sectionContent', bold: true},
+              ],
+              ...this.applicantEducation.map(p => (
+                [
+                  {text: this.getNiceValue('degree', p.type) , style: 'sectionContent'},
+                  {text: p.school_name, style: 'sectionContent'},
+                  {text: p.major_name, style: 'sectionContent'},
+                  {text: p.begin + ' - ' + p.end, style: 'sectionContent'},
+                  {text: p.graduated === 1 ? "Yes" : "No", style: 'sectionContent'}
+                ]))
+            ]
+          }
+        },
+        {
+          text: ' ',
+          fontSize: 15,
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['40%', '40%', '20%'],
+            body: [
+              [{text: 'SKILL', colSpan: 3, style: 'sectionHeader', bold: true}, {}, {}],
+              [
+                {text: 'Office', style: 'sectionContent', bold: true},
+                {text: 'Language', style: 'sectionContent', bold: true},
+                {text: 'Others', style: 'sectionContent', bold: true},
+              ],
+              [
+                {text: officeskl , style: 'sectionContent'},
+                {text: langskl, style: 'sectionContent'},
+                {text: otherskl, style: 'sectionContent'},
+              ]
+            ]
+          }
+        },
+        {
+          text: ' ',
+          fontSize: 15,
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['15%', '20%', '15%', '20%', '15%', '15%'],
+            body: this.person.experiences.length !== 0 ?
+            [
+              [{text: 'WORKING EXPERIENCE', colSpan: 6, style: 'sectionHeader', bold: true},  {}, {}, {}, {}, {}],
+              [
+                {text: 'Company Name', style: 'sectionContent', bold: true},
+                {text: this.person.experiences[0].company_name, colSpan: 3, style: 'sectionContent'},
+                {},
+                {},
+                {text: 'Time', style: 'sectionContent', bold: true},
+                {text: this.person.experiences[0].begin + '-' + this.person.experiences[0].end, style: 'sectionContent'},
+              ],
+              [
+                {text: 'Salary', style: 'sectionContent', bold: true},
+                {text: this.person.experiences[0].country.currency + this.person.experiences[0].salary, style: 'sectionContent'},
+                {text: 'Working Location', style: 'sectionContent', bold: true},
+                {text: this.person.experiences[0].location?.name, style: 'sectionContent'},
+                {text: 'Resign Reason', style: 'sectionContent', bold: true},
+                {text: this.person.experiences[0].resign_reason, style: 'sectionContent'},
+              ]
+            ] :
+            [[{text: 'NO HAVE WORKING EXPERIENCE', colSpan: 6, style: 'sectionHeader', bold: true},  {}, {}, {}, {}, {}],]
+          }
+        },
+        {
+          text: ' ',
+          fontSize: 15,
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['98%', '2%'],
+            body: [
+              [{text: 'DECLARATION', colSpan: 2, style: 'sectionHeader', bold: true}, {}],
+              [
+                {text: 'I declare that the information data in this application is true and accurate. I understand that any misrepresentation of ' +
+                'facts given here in with be sufficient cause of dismissal from the companys\' service if I have been employed', style: 'sectionContent'},
+                {text: '√', style: 'sectionContent'},
+              ]
+            ]
+          }
+        },
+        {
+          text: 'INVOICE',
+          fontSize: 14,
+          bold: true,
+          alignment: 'right',
+          color: '#2e2e2e',
+          pageBreak: "before"
+        }
+      ],
+      styles: {
+        sectionHeader: {
+          bold: true,
+          fontSize: 11,
+          alignment: 'center',
+          fillColor: '#757474',
+          color: '#ededed'
+        },
+        sectionContent: {
+          bold: false,
+          fontSize: 9,
+          //margin: [0, 15,0, 15]
+        }
+      },
+      // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
+      pageMargins: [ 10, 46, 10, 18 ],
+
+    };
+
+    if(action==='download'){
+      pdfMake.createPdf(docDefinition).download(this.person.id + ' ' + this.person.name.trim())
+    }else{
+      var win = window.open('' + 'ehhehe' ,'name','width=800,height=700')
+      pdfMake.createPdf(docDefinition).open({}, win)
+    }
   }
 
 
@@ -530,6 +629,34 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
   /* -------------- CHIP ENGINE END ------------------ */
 
   /*-----------OTHER-------------- */
+
+
+  getBase64ImageFromURL(url) {
+    console.log('rcvd url ', url)
+    return new Promise((resolve, reject) => {
+      var img = new Image();
+      img.setAttribute("crossOrigin", "anonymous");
+      img.onload = () => {
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        var dataURL = canvas.toDataURL("image/png");
+        resolve(dataURL);
+      };
+      img.onerror = error => {
+        reject(error);
+        console.log('eroooor', error)
+        url = environment.photoUrl + 'notfound.png'
+        console.log('err url ', url)
+      };
+      img.src = url;
+      console.log('img', img)
+    });
+  }
+
+
   getNiceValue(key:string, val: number) //PDF value
   {
     var result = "";
@@ -554,20 +681,12 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
               result = "Cousin";
           else if (val == 9)
               result = "Sibling";
-
           break;
-
       case "gender":
           if (val == 1)
               result = "Male";
           else if (val == 2)
               result = "Female";
-          break;
-      case "marital_status":
-          if (val == 1)
-              result = "Single";
-          else if (val == 2)
-              result = "Married";
           break;
       case "marital":
           if (val == 1)
@@ -588,71 +707,6 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
               result = "Doctor";
           else if (val == 6)
               result = "Diploma";
-          break;
-      case "position_now":
-          if (val == 1)
-              result = "Normal";
-          else if (val == 2)
-              result = "Fresh Graduate";
-          else if (val == 3)
-              result = "Student";
-          break;
-      case "company_size":
-          if (val == 1)
-              result = "1-50 People";
-          else if (val == 2)
-              result = "50-100 People";
-          else if (val == 3)
-              result = "100-500 People";
-          else if (val == 4)
-              result = "500-1000 People";
-          else if (val == 5)
-              result = "1000-5000 People";
-          else if (val == 6)
-              result = "5000-10000 People";
-          else if (val == 7)
-              result = "> 10000 People";
-
-          break;
-      case "working_experience":
-          if (val == 1)
-              result = "< 1";
-          else if (val == 2)
-              result = "1 - 5";
-          else if (val == 3)
-              result = "5 - 10";
-          else if (val == 4)
-              result = "> 10";
-          break;
-      case "management_responsibility":
-          if (val == 1)
-              result = "< 4 People";
-          else if (val == 2)
-              result = "5 - 8 People";
-          else if (val == 3)
-              result = "9 - 12 People";
-          else if (val == 4)
-              result = "> 13 People";
-          break;
-      case "education_background":
-          if (val == 1)
-              result = "University";
-          else if (val == 2)
-              result = "Senior High School";
-          break;
-      case "contact_via":
-          if (val == 1)
-              result = "Telephone";
-          else if (val == 2)
-              result = "Email";
-          break;
-      case "contact_time":
-          if (val == 1)
-              result = "07:00 - 12:00";
-          else if (val == 2)
-              result = "13:00 - 18:00";
-          else if (val == 3)
-              result = "18:00 - 22:00";
           break;
     }
     return result;
