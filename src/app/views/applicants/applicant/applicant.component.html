@@ -146,9 +146,9 @@
                       </button>
                       <ul *dropdownMenu class="dropdown-menu" role="menu">
                         <li role="menuitem"><a class="dropdown-item"  (click)="generatePDF(person.id, 'download')">Download CV</a></li>
-                        <li role="menuitem"><a class="dropdown-item" href="#">Download KTP</a></li>
-                        <li role="menuitem"><a class="dropdown-item" href="#">Download KK</a></li>
-                        <li role="menuitem"><a class="dropdown-item" href="#">Download Photo</a>
+                        <li role="menuitem"><a class="dropdown-item" (click)="downloadPhoto(person.id, 'ktp')">Download KTP</a></li>
+                        <li role="menuitem"><a class="dropdown-item" (click)="downloadPhoto(person.id, 'kk')">Download KK</a></li>
+                        <li role="menuitem"><a class="dropdown-item" (click)="downloadPhoto(person.id, 'foto')">Download Photo</a>
                         </li>
                       </ul>
                     </div>

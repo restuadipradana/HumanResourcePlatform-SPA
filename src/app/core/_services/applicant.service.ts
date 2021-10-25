@@ -30,6 +30,10 @@ export class ApplicantService {
     return this.http.get<any>(url, {}).toPromise();
   }
 
+  async getPersonAsync(id: string){
+    return this.http.get<any>(this.baseUrl + 'applicant/person', {params : {id:id}}).toPromise()
+  }
+
   getImage(imageUrl: string): Observable<Blob> {
     return this.http.get(imageUrl, { responseType: 'blob' })
   }

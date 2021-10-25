@@ -57,7 +57,13 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(DataTableDirective, {static: false})
   dtElement: DataTableDirective;
 
-  urlFoto: any = environment.photoUrl
+  urlPhoto: any = environment.photoUrl
+  foto: any
+  ktp: any
+  kk: any
+  npwp: any
+  ijazah: any
+  vaksin: any
 
   constructor(private toastr: ToastrService,
               private _applicantSvc: ApplicantService,
@@ -156,9 +162,8 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
     )
   }
 
-
-
   generatePDF(id: string, action: string) {
+    this.spinner.show()
     this._applicantSvc.getPerson(id).subscribe(
       (res: any) => {
         this.showPdf(res, action)
@@ -166,6 +171,59 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
       }, //end of http request
       (error) => {
         this.toastr.error('Failed to open CV :(', 'Oops.. Something wrong..!');
+        console.log("Error: " , error.error.text);
+        this.spinner.hide()
+      }
+    )
+  }
+
+  downloadPhoto(id: string, kind: string) {
+    this._applicantSvc.getPerson(id).subscribe(
+      (res: any) => {
+        let nama = res.name.trim().replace(/ /g, '%20')
+        let urlx = ''
+        let namafile = ''
+
+        if (kind === 'foto') {
+          urlx = this.urlPhoto + res.id + '.%20' + nama + '.png'
+          namafile = res.id + '. ' + res.name.trim() + '.png'
+        }
+        else if (kind === 'ktp') {
+          urlx = this.urlPhoto + 'ktp/' + res.id + '.%20' + 'KTP%20' + nama + '.png'
+          namafile =  res.id + '. ' + 'KTP ' + res.name.trim() + '.png'
+        }
+        else if (kind === 'kk') {
+          urlx = this.urlPhoto + 'kk/' + res.id + '.%20' + 'KK%20' + nama + '.png'
+          namafile = res.id + '. ' + 'KK ' + res.name.trim() + '.png'
+        }
+        else if (kind === 'npwp') {
+          urlx = this.urlPhoto + 'npwp/' + res.id + '.%20' + 'NPWP%20' + nama + '.png'
+          namafile = res.id + '. ' + 'NPWP ' + res.name.trim() + '.png'
+        }
+        else if (kind === 'ijazah') {
+          urlx = this.urlPhoto + 'ijazah/' + res.id + '.%20' + 'IJAZAH%20' + nama + '.png'
+          namafile = res.id + '. ' + 'IJAZAH ' + res.name.trim() + '.png'
+        }
+        else if (kind === 'vaksin') {
+          urlx = this.urlPhoto + 'vaksin/' + res.id + '.%20' + 'VAKSIN%20' + nama + '.png'
+          namafile = res.id + '. ' + 'VAKSIN ' + res.name.trim() + '.png'
+        }
+
+        this._applicantSvc.getImage(urlx).subscribe((result: Blob) => {
+          const blob = new Blob([result]);
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          const currentTime = new Date();
+          const filename = namafile
+          link.href = url;
+          link.setAttribute('download', filename);
+          document.body.appendChild(link);
+          link.click();
+        });
+
+      }, //end of http request
+      (error) => {
+        this.toastr.error('No image found!');
         console.log("Error: " , error.error.text);
       }
     )
@@ -176,7 +234,6 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
     this.applicantConnection = []
     this.applicantEducation = []
     this.person = res;
-    var religion_name = "";
     this.applicantConnection = this.person.connections
     this.applicantEducation = this.person.educations
     this.officeSkill = this.person.officeSkills
@@ -189,48 +246,79 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
     let otherskl = ''
     otherskl = this.otherSkill.map(val => otherskl + val.skill.name.trim()).toString()
 
-    this.urlFoto = environment.photoUrl
+    this.urlPhoto = environment.photoUrl
     let nama = this.person.name.trim().replace(/ /g, '%20')
-    let expectPhoto = this.urlFoto + this.person.id + '.%20' + nama + '.png'
-    this.urlFoto = expectPhoto
-    var imagex =  await this.getBase64ImageFromURL(environment.photoUrl + 'notfound.png')
+    let urlFoto = this.urlPhoto + this.person.id + '.%20' + nama + '.png'
+    let urlKtp = this.urlPhoto + 'ktp/' + this.person.id + '.%20' + 'KTP%20' + nama + '.png'
+    let urlKk = this.urlPhoto + 'kk/' + this.person.id + '.%20' + 'KK%20' + nama + '.png'
+    let urlNpwp = this.urlPhoto + 'npwp/' + this.person.id + '.%20' + 'NPWP%20' + nama + '.png'
+    let urlIjazah = this.urlPhoto + 'ijazah/' + this.person.id + '.%20' + 'IJAZAH%20' + nama + '.png'
+    let urlVaksin = this.urlPhoto + 'vaksin/' + this.person.id + '.%20' + 'VAKSIN%20' + nama + '.png'
 
-    await this._applicantSvc.getImgStat(this.urlFoto).then(
+    //this.urlPhoto = urlFoto
+    var imagex =  await this.getBase64ImageFromURL(environment.photoUrl + 'notfound.png') //default image
+    this.foto = imagex // await this.getPhoto(urlFoto, 'foto')//imagex
+    this.ktp = imagex
+    this.kk = imagex
+    this.npwp = imagex
+    this.ijazah = imagex
+    this.vaksin = imagex
+
+    await this._applicantSvc.getImgStat(urlFoto).then(
       () => {
       },
-      async (error) => {
+      async (error) => { //pasti error karna bukan blob, cuma mau dapatkan status
         if (error.status == 200) {
-          imagex =  await this.getBase64ImageFromURL(this.urlFoto)
+          this.foto =  await this.getBase64ImageFromURL(urlFoto)
+        }
+      }
+    )
+    await this._applicantSvc.getImgStat(urlKtp).then(
+      () => {
+      },
+      async (error) => { //pasti error karna bukan blob, cuma mau dapatkan status
+        if (error.status == 200) {
+          this.ktp =  await this.getBase64ImageFromURL(urlKtp)
+        }
+      }
+    )
+    await this._applicantSvc.getImgStat(urlKk).then(
+      () => {
+      },
+      async (error) => { //pasti error karna bukan blob, cuma mau dapatkan status
+        if (error.status == 200) {
+          this.kk =  await this.getBase64ImageFromURL(urlKk)
+        }
+      }
+    )
+    await this._applicantSvc.getImgStat(urlNpwp).then(
+      () => {
+      },
+      async (error) => { //pasti error karna bukan blob, cuma mau dapatkan status
+        if (error.status == 200) {
+          this.npwp =  await this.getBase64ImageFromURL(urlNpwp)
+        }
+      }
+    )
+    await this._applicantSvc.getImgStat(urlIjazah).then(
+      () => {
+      },
+      async (error) => { //pasti error karna bukan blob, cuma mau dapatkan status
+        if (error.status == 200) {
+          this.ijazah =  await this.getBase64ImageFromURL(urlIjazah)
+        }
+      }
+    )
+    await this._applicantSvc.getImgStat(urlVaksin).then(
+      () => {
+      },
+      async (error) => { //pasti error karna bukan blob, cuma mau dapatkan status
+        if (error.status == 200) {
+          this.vaksin =  await this.getBase64ImageFromURL(urlVaksin)
         }
       }
     )
 
-
-
-    switch (this.person.religion)
-    {
-      case 1:
-          religion_name = "Islam";
-          break;
-      case 2:
-          religion_name = "Buddha";
-          break;
-      case 3:
-          religion_name = "Protestant";
-          break;
-      case 4:
-          religion_name = "Confucius";
-          break;
-      case 5:
-          religion_name = "Hindu";
-          break;
-      case 6:
-          religion_name = "Catholic";
-          break;
-      case 7:
-          religion_name = "Others";
-          break;
-    }
     let docDefinition = {
       info: {
         title: this.person.id + ' ' + this.person.name.trim(),
@@ -278,14 +366,14 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
                 headerRows: 1,
                 widths: ['100%'],
                 body: [
-                  [{image:  imagex , fit: [85, 100], alignment: 'center',}],
+                  [{image:  this.foto , fit: [85, 100], alignment: 'center',}],
                   [{text: '0000', style: 'sectionContent'}],
                   [{text: '01/01/2001', style: 'sectionContent'}],
                 ]
               }
               //text: 'Foroo'
 
-              //image: this.imgToBase64(this.urlFoto),
+              //image: this.imgToBase64(this.urlPhoto),
 
               // height: 200
             }
@@ -317,7 +405,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
                 {text: 'Place of Birth', style: 'sectionContent', bold: true},
                 {text: this.person.birthplace.name, style: 'sectionContent'},
                 {text: 'Religion', style: 'sectionContent', bold: true},
-                {text: religion_name, style: 'sectionContent'}
+                {text: this.getNiceValue('religion', this.person.religion), style: 'sectionContent'}
               ],
               [
                 {text: 'Email', style: 'sectionContent', bold: true},
@@ -477,13 +565,81 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         },
         {
-          text: 'INVOICE',
+          text: '',
           fontSize: 14,
           bold: true,
           alignment: 'right',
           color: '#2e2e2e',
           pageBreak: "before"
-        }
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['100%'],
+            body: [
+              [{text: 'ATTACHMENT', style: 'sectionHeader', bold: true}],
+            ]
+          }
+        },
+        {
+          text: ' ',
+          fontSize: 15,
+        },
+        {image:  this.ktp , fit: [270, 150], alignment: 'center',},
+        {
+          text: ' ',
+          fontSize: 10,
+        },
+        {image:  this.kk , fit: [525, 390], alignment: 'center',},
+        {
+          text: ' ',
+          fontSize: 10,
+        },
+        {image:  this.npwp , fit: [270, 150], alignment: 'center',},
+        {
+          text: '',
+          fontSize: 14,
+          bold: true,
+          alignment: 'right',
+          color: '#2e2e2e',
+          pageBreak: "before"
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['100%'],
+            body: [
+              [{text: 'IJAZAH', style: 'sectionHeader', bold: true}],
+            ]
+          }
+        },
+        {
+          text: ' ',
+          fontSize: 15,
+        },
+        {image:  this.ijazah , fit: [450, 750], alignment: 'center',},
+        {
+          text: '',
+          fontSize: 14,
+          bold: true,
+          alignment: 'right',
+          color: '#2e2e2e',
+          pageBreak: "before"
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['100%'],
+            body: [
+              [{text: 'VACCINE CERTIFICATE', style: 'sectionHeader', bold: true}],
+            ]
+          }
+        },
+        {
+          text: ' ',
+          fontSize: 10,
+        },
+        {image:  this.vaksin , fit: [450, 750], alignment: 'center',},
       ],
       styles: {
         sectionHeader: {
@@ -510,7 +666,68 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
       var win = window.open('' + 'ehhehe' ,'name','width=800,height=700')
       pdfMake.createPdf(docDefinition).open({}, win)
     }
+    this.spinner.hide()
   }
+
+
+
+/* -------------- IMAGE PDF RESOURCE BEGIN ------------------ */
+
+  async getPhoto(url, kind) { //buggy - no use --
+    console.log(2)
+    await this._applicantSvc.getImgStat(url).then(
+      () => {
+      },
+      async (error) => { //pasti error karna bukan blob, cuma mau dapatkan status
+        if (error.status == 200) {
+          console.log(3)
+          if (kind === 'foto') {
+            this.foto =  await this.getBase64ImageFromURL(url)
+            console.log(31)
+          }
+          else if (kind === 'ktp') {
+            this.ktp =  await this.getBase64ImageFromURL(url)
+          }
+          else if (kind === 'kk') {
+            this.kk =  await this.getBase64ImageFromURL(url)
+          }
+          else if (kind === 'npwp') {
+            this.npwp =  await this.getBase64ImageFromURL(url)
+          }
+          else if (kind === 'ijazah') {
+            this.ijazah =  await this.getBase64ImageFromURL(url)
+          }
+          else if (kind === 'vaksin') {
+            this.vaksin =  await this.getBase64ImageFromURL(url)
+          }
+        }
+      }
+    )
+    console.log(5)
+  }
+
+  getBase64ImageFromURL(url) {
+    return new Promise((resolve, reject) => {
+      var img = new Image();
+      img.setAttribute("crossOrigin", "anonymous");
+      img.onload = () => {
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        var dataURL = canvas.toDataURL("image/png");
+        resolve(dataURL);
+      };
+      img.onerror = error => {
+        reject(error);
+      };
+      img.src = url;
+    });
+  }
+
+
+/* -------------- IMAGE RESOURCE BEGIN ------------------ */
 
 
 /* -------------- MODAL ENGINE BEGIN ------------------ */
@@ -630,84 +847,73 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /*-----------OTHER-------------- */
 
-
-  getBase64ImageFromURL(url) {
-    console.log('rcvd url ', url)
-    return new Promise((resolve, reject) => {
-      var img = new Image();
-      img.setAttribute("crossOrigin", "anonymous");
-      img.onload = () => {
-        var canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        var dataURL = canvas.toDataURL("image/png");
-        resolve(dataURL);
-      };
-      img.onerror = error => {
-        reject(error);
-        console.log('eroooor', error)
-        url = environment.photoUrl + 'notfound.png'
-        console.log('err url ', url)
-      };
-      img.src = url;
-      console.log('img', img)
-    });
-  }
-
-
   getNiceValue(key:string, val: number) //PDF value
   {
     var result = "";
     switch (key)
     {
       case "relation":
-          if (val == 1)
-              result = "Father";
-          else if (val == 2)
-              result = "Mother";
-          else if (val == 3)
-              result = "Husband";
-          else if (val == 4)
-              result = "Wife";
-          else if (val == 5)
-              result = "Children";
-          else if (val == 6)
-              result = "Uncle";
-          else if (val == 7)
-              result = "Aunt";
-          else if (val == 8)
-              result = "Cousin";
-          else if (val == 9)
-              result = "Sibling";
-          break;
+        if (val == 1)
+          result = "Father";
+        else if (val == 2)
+          result = "Mother";
+        else if (val == 3)
+          result = "Husband";
+        else if (val == 4)
+          result = "Wife";
+        else if (val == 5)
+          result = "Children";
+        else if (val == 6)
+          result = "Uncle";
+        else if (val == 7)
+          result = "Aunt";
+        else if (val == 8)
+          result = "Cousin";
+        else if (val == 9)
+          result = "Sibling";
+        break;
       case "gender":
-          if (val == 1)
-              result = "Male";
-          else if (val == 2)
-              result = "Female";
-          break;
+        if (val == 1)
+          result = "Male";
+        else if (val == 2)
+          result = "Female";
+        break;
       case "marital":
-          if (val == 1)
-              result = "Single";
-          else if (val == 2)
-              result = "Married";
-          break;
+        if (val == 1)
+          result = "Single";
+        else if (val == 2)
+          result = "Married";
+        break;
       case "degree":
-          if (val == 1)
-              result = "Non Formal";
-          else if (val == 2)
-              result = "Senior High School";
-          else if (val == 3)
-              result = "Bachelor";
-          else if (val == 4)
-              result = "Master";
-          else if (val == 5)
-              result = "Doctor";
-          else if (val == 6)
-              result = "Diploma";
-          break;
+        if (val == 1)
+          result = "Non Formal";
+        else if (val == 2)
+          result = "Senior High School";
+        else if (val == 3)
+          result = "Bachelor";
+        else if (val == 4)
+          result = "Master";
+        else if (val == 5)
+          result = "Doctor";
+        else if (val == 6)
+          result = "Diploma";
+        break;
+      case "religion":
+        if (val == 1)
+          result = "Islam";
+        else if (val == 2)
+          result = "Buddha";
+        else if (val == 3)
+          result = "Protestant";
+        else if (val == 4)
+          result = "Confucius";
+        else if (val == 5)
+          result = "Hindu";
+        else if (val == 6)
+          result = "Catholic";
+        else if (val == 6)
+          result = "-";
+        break;
     }
     return result;
   }
