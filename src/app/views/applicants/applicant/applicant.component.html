@@ -152,7 +152,8 @@
                         </li>
                       </ul>
                     </div>
-                    <button type="button" class="btn btn-ghost-primary" tooltip="Edit" (click)="openModal(templatew, person.id)"><i class="icon-note"></i></button>
+                    <!--<button type="button" class="btn btn-ghost-primary" tooltip="Edit" (click)="openModal(templatew, person.id)"><i class="icon-note"></i></button>-->
+                    <button type="button" class="btn btn-ghost-primary" tooltip="Edit" (click)="clickRow(person.id)"><i class="icon-note"></i></button>
                     <button type="button" class="btn btn-ghost-primary" tooltip="View CV" (click)="generatePDF(person.id)"><i class="icon-doc"></i></button>
                   </td>
                 </tr>

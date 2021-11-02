@@ -1,3 +1,5 @@
+import { TAttachment } from './../_models/t-attachment';
+import { HApplicantEdit } from './../_models/h-applicant-edit';
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpParams, HttpRequest } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -30,12 +32,24 @@ export class ApplicantService {
     return this.http.get<any>(url, {}).toPromise();
   }
 
-  async getPersonAsync(id: string){
+  async getPersonAsync(id: string){ //deprecated
     return this.http.get<any>(this.baseUrl + 'applicant/person', {params : {id:id}}).toPromise()
   }
 
   getImage(imageUrl: string): Observable<Blob> {
     return this.http.get(imageUrl, { responseType: 'blob' })
+  }
+
+  saveEmployee(model : HApplicantEdit) {
+    return this.http.post(this.baseUrl + 'applicant/update-employee', model);
+  }
+
+  saveAttachment(model : any) {
+    return this.http.post(this.baseUrl + 'applicant/update-attachment', model);
+  }
+
+  deleteAttachment(id, kind) {
+    return this.http.post(this.baseUrl + 'applicant/delete-attachment', {applicant_id: id, kind: kind}, {});
   }
 
   // checkImageExist(url: string) {

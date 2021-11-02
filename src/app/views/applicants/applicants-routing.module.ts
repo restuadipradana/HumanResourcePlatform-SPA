@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ApplicantComponent } from './applicant/applicant.component';
+import { ApplicantDetailComponent } from './applicant-detail/applicant-detail.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,14 @@ const routes: Routes = [
           title: 'Applicants'
         }
       },
+      {
+        path: ':id',
+        component: ApplicantDetailComponent,
+        data: {
+          title: 'Applicant',
+        }
+      },
+
 
     ]
   }

@@ -66,7 +66,7 @@ import { PdfViewComponent } from './views/pdf-view/pdf-view.component';
     IconModule,
     IconSetModule.forRoot(),
     ToastrModule.forRoot({
-      positionClass :'toast-top-center',
+      positionClass :'toast-top-right',
       preventDuplicates: true,
       progressBar: true,
       tapToDismiss: true,

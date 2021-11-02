@@ -18,8 +18,7 @@ import { TApplicant } from '../../../core/_models/t-applicant';
 import { TApplicantConnection } from '../../../core/_models/t-applicant-connection';
 import { TEducation } from '../../../core/_models/t-education';
 import { TApplicantSkill } from '../../../core/_models/t-applicantskill';
-import { retry } from 'rxjs/operators';
-import { kill } from 'process';
+import { TOccupation } from '../../../core/_models/t-occupation';
 
 @Component({
   selector: 'app-applicant',
@@ -47,6 +46,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
   applicantList: TApplicant[] = []
   applicantConnection: TApplicantConnection[] = []
   applicantEducation: TEducation[] = []
+  applicantOccupation: TOccupation[] = []
   officeSkill: TApplicantSkill[] = []
   languageSkill: TApplicantSkill[] = []
   otherSkill: TApplicantSkill[] = []
@@ -64,6 +64,8 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
   npwp: any
   ijazah: any
   vaksin: any
+
+  public bcum: any = { title:'Applicants Detailxxx'};
 
   constructor(private toastr: ToastrService,
               private _applicantSvc: ApplicantService,
@@ -162,6 +164,14 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
     )
   }
 
+  clickRow(id: number){
+    //this.router.navigateByUrl('/applicants/d/'+id, { state: {data: {title: 'Wehehe'} }});
+    //this.router.navigate(['/applicants/'+id],  { state: {data: {title: 'Wehehe'} }});
+    //this.router.navigate(['/applicants/'+id ], { state: this.bcum });
+    const url = '#/applicants/' + id
+    window.open(url, '_blank');
+  }
+
   generatePDF(id: string, action: string) {
     this.spinner.show()
     this._applicantSvc.getPerson(id).subscribe(
@@ -219,6 +229,9 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
           link.setAttribute('download', filename);
           document.body.appendChild(link);
           link.click();
+        }, (error) => {
+          this.toastr.error('No image found!', 'Error');
+          console.log("Error: " , error.error.text);
         });
 
       }, //end of http request
@@ -233,9 +246,13 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
     this.person = {}
     this.applicantConnection = []
     this.applicantEducation = []
+    this.applicantOccupation = []
     this.person = res;
     this.applicantConnection = this.person.connections
     this.applicantEducation = this.person.educations
+    this.applicantOccupation = this.person.occupations
+    let occupations = ''
+    occupations = this.applicantOccupation.map(val => occupations + val.name.trim() + (val.parent > 0 ? '(' + val.occupation_parent.name.trim() + ')' : '' )).toString()
     this.officeSkill = this.person.officeSkills
     this.languageSkill = this.person.languageSkills
     this.otherSkill = this.person.othersSkills
@@ -352,11 +369,12 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
               width: '85%',
               table: {
                 headerRows: 1,
-                widths: ['40%', '60%'],
+                widths: ['25%', '75%'],
                 body: [
                   [{text: 'SEEKING FOR JOB', colSpan: 2, style: 'sectionHeader', bold: true}, {}],
                   [{text: 'Soonest working date', style: 'sectionContent', bold: true}, {text: new Date(this.person.soonest_working_date).toLocaleDateString(), style: 'sectionContent'}],
-                  [{text: 'Salary', style: 'sectionContent', bold: true}, {text: this.person.salary === 0 ? 'Company Requirements' : this.person.country.currency + this.person.salary, style: 'sectionContent'}]
+                  [{text: 'Salary', style: 'sectionContent', bold: true}, {text: this.person.salary === 0 ? 'Company Requirements' : this.person.country.currency + this.person.salary, style: 'sectionContent'}],
+                  [{text: 'Occupations', style: 'sectionContent', bold: true}, {text: occupations, style: 'sectionContent'}]
                 ]
               }
             },
@@ -366,9 +384,9 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
                 headerRows: 1,
                 widths: ['100%'],
                 body: [
-                  [{image:  this.foto , fit: [85, 100], alignment: 'center',}],
-                  [{text: '0000', style: 'sectionContent'}],
-                  [{text: '01/01/2001', style: 'sectionContent'}],
+                  [{image:  this.foto , fit: [85, 118], alignment: 'center',}],
+                  [{text: 'NIK: ' + (this.person.employee === null ? '-' : this.person.employee.nik), style: 'sectionContent'}],
+                  [{text: 'TMB: ' + (this.person.employee === null ? '-' : new Date(this.person.employee.join_date).toLocaleDateString()), style: 'sectionContent'}],
                 ]
               }
               //text: 'Foroo'
@@ -388,7 +406,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
         {
           table: {
             headerRows: 1,
-            widths: ['14%', '27%', '12%', '21%', '12%', '14%'], // -2
+            widths: ['14%', '27%', '12%', '21%', '12%', '14%'],
             body: [
               [{text: 'PERSONAL IDENTITY', colSpan: 6, style: 'sectionHeader', bold: true}, {}, {}, {}, {}, {}],
               [
@@ -441,7 +459,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
         {
           table: {
             headerRows: 1,
-            widths: ['10%', '25%', '8%', '22%', '19%', '16%'], //
+            widths: ['10%', '25%', '8%', '22%', '19%', '16%'],
             body: [
               [{text: 'FAMILY', colSpan: 6, style: 'sectionHeader', bold: true}, {}, {}, {}, {}, {}],
               [
@@ -471,7 +489,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
         {
           table: {
             headerRows: 1,
-            widths: ['15%', '35%', '25%', '16%', '9%'], // EDUCATION tinggak bikin model Education trus di map
+            widths: ['15%', '35%', '25%', '16%', '9%'],
             body: [
               [{text: 'EDUCATION', colSpan: 5, style: 'sectionHeader', bold: true}, {}, {}, {}, {}],
               [
@@ -727,7 +745,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-/* -------------- IMAGE RESOURCE BEGIN ------------------ */
+/* -------------- IMAGE RESOURCE END ------------------ */
 
 
 /* -------------- MODAL ENGINE BEGIN ------------------ */

@@ -12,11 +12,13 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { ApplicantsRoutingModule } from './applicants-routing.module';
 import { ApplicantComponent } from './applicant/applicant.component';
+import { ApplicantDetailComponent } from './applicant-detail/applicant-detail.component';
 
 
 @NgModule({
   declarations: [
-    ApplicantComponent
+    ApplicantComponent,
+    ApplicantDetailComponent
   ],
   imports: [
     CommonModule,
