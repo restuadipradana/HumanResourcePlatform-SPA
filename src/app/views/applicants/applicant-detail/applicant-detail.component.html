@@ -1,54 +1,176 @@
 <div class="animated fadeIn">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
       <div class="card">
         <div class="card-header">
           <strong>Detail Applicant</strong>
+          <button class="btn btn-sm btn-primary " style="float: right;" (click)="closeThisPage()">&nbsp;<i class="fa fa-chevron-left"></i> Back</button>
         </div>
         <div class="card-body">
           <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+
+
             <div class="form-group row">
-              <label class="col-md-3 col-form-label">No. KTP</label>
-              <div class="col-md-9">
+              <label class="col-md-1 col-form-label">No. KTP</label>
+              <div class="col-md-3">
                 <label class="col-form-label">{{person.ktp}}</label>
               </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="name">Name</label>
-              <div class="col-md-9">
+              <label class="col-md-1 col-form-label" for="name">Name</label>
+              <div class="col-md-6">
                 <input type="text" id="name" name="name" class="form-control" [(ngModel)]="person.name">
               </div>
             </div>
+
             <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="nik">ID Number (NIK)</label>
-              <div class="col-md-9">
+              <label class="col-md-1 col-form-label" for="nik">ID Number (NIK)</label>
+              <div class="col-md-2">
                 <input type="text" id="nik" name="nik" class="form-control" [(ngModel)]="employee.nik" maxlength="5">
               </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="join-date">Join Date</label>
-              <div class="col-md-9">
+              <div class="col-md-1"></div>
+              <label class="col-md-1 col-form-label" for="join-date">Join Date</label>
+              <div class="col-md-2">
                 <input class="form-control" id="join-date" type="date" name="join-date" [(ngModel)]="employee.join_date">
               </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="e-probation">End Probation</label>
-              <div class="col-md-9">
+              <div class="col-md-1"></div>
+              <label class="col-md-1 col-form-label" for="e-probation">End Probation</label>
+              <div class="col-md-2">
                 <input class="form-control" id="e-probation" type="date" name="e-probation" [(ngModel)]="employee.end_probation">
               </div>
             </div>
-            <!--
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="file-input">File input</label>
-              <div class="col-md-9">
-                <label class="btn btn-primary upload mt-3"> Upload
-                  <input type="file" id="file-input" style="width: 0px; height: 0px; overflow: hidden;" name="file-input">
-                </label>
+            <hr>
+
+            <div class="row">
+              <div class=" col-md-6" >
+                <div class="form-group row">
+                  <label class="col-md-3 col-form-label" for="cv">CV Candidate</label>
+                  <div class="input-group col-md-8" *ngIf="!isAnyCv">
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="input-cv" (change)="onFileSelect($event,0)">
+                      <label class="custom-file-label" #labelCv for="input-cv" aria-describedby="input-cv-addon">Choose file</label>
+                    </div>
+                  </div>
+                  <div class="input-group col-md-8" *ngIf="isAnyCv">
+                    <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(cvUrl)"><i class="fa fa-eye"></i> View</button>
+                    &nbsp;
+                    <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'cv')">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 col-form-label" for="skck">SKCK</label>
+                  <div class="input-group col-md-8"  *ngIf="!isAnySkck">
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="input-skck" (change)="onFileSelect($event,1)">
+                      <label class="custom-file-label" #labelSkck for="input-skck" aria-describedby="input-skck-addon">Choose file</label>
+                    </div>
+                  </div>
+                  <div class="input-group col-md-8" *ngIf="isAnySkck">
+                    <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(skckUrl)"><i class="fa fa-eye"></i> View</button>
+                    &nbsp;
+                    <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'skck')">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 col-form-label" for="agreement">Agreement Contract</label>
+                  <div class="input-group col-md-8"  *ngIf="!isAnyAgreement">
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="input-agreement" (change)="onFileSelect($event,2)">
+                      <label class="custom-file-label" #labelAgreement for="input-agreement" aria-describedby="input-agreement-addon">Choose file</label>
+                    </div>
+                  </div>
+                  <div class="input-group col-md-8" *ngIf="isAnyAgreement">
+                    <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(agreementUrl)"><i class="fa fa-eye"></i> View</button>
+                    &nbsp;
+                    <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'agreement')">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 col-form-label" for="assesment">Assesment</label>
+                  <div class="input-group col-md-8"  *ngIf="!isAnyAssessment">
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="input-assesment" (change)="onFileSelect($event,3)">
+                      <label class="custom-file-label" #labelAssesment for="input-assesment" aria-describedby="input-assesment-addon">Choose file</label>
+                    </div>
+                  </div>
+                  <div class="input-group col-md-8" *ngIf="isAnyAssessment">
+                    <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(assessmentUrl)"><i class="fa fa-eye"></i> View</button>
+                    &nbsp;
+                    <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'assesment')">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 col-form-label" for="certificate">Certificate of Employee</label>
+                  <div class="input-group col-md-8"  *ngIf="!isAnyCertificate">
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="input-certificate" (change)="onFileSelect($event,4)">
+                      <label class="custom-file-label" #labelCertificate for="input-certificate" aria-describedby="input-certificate-addon">Choose file</label>
+                    </div>
+                  </div>
+                  <div class="input-group col-md-8" *ngIf="isAnyCertificate">
+                    <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(certificateUrl)"><i class="fa fa-eye"></i> View</button>
+                    &nbsp;
+                    <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'certificate')">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class=" col-md-6" >
+                <div class="row">
+                  <div class="col-md-3">
+                    <label class=" col-form-label" for="y-assesment">Yearly Assesment</label>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row" *ngFor="let url of yearlyAssessmentUrl;let idx=index">
+                      <div class="col-md-12" >
+                        <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(rootUrl+url)"><i class="fa fa-eye"></i> View</button>
+                        &nbsp;
+                        <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'yearlyassessment-'+ idx)">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
+                        &nbsp;
+                        {{fileName(url)}}
+                      </div>
+                    </div>
+                    <div class=" row">
+                      <div class="input-group col-md-12" *ngIf="yearlyAssessmentUrl.length < 5">
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="input-y-assesment" (change)="onFileSelect($event,5)">
+                          <label class="custom-file-label" #labelYAssesment for="input-y-assesment" aria-describedby="input-y-assesment-addon">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  &nbsp;
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                    <label class=" col-form-label" for="supporting">Other Supporting Doc.</label>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row" *ngFor="let url of supportingDocUrl;let idx=index">
+                      <div class="col-md-12" >
+                        <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(rootUrl+url)"><i class="fa fa-eye"></i> View</button>
+                        &nbsp;
+                        <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'supportingdoc-'+ idx)">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
+                        &nbsp;
+                        {{fileName(url)}}
+                      </div>
+                    </div>
+                    <div class=" row">
+                      <div class="input-group col-md-12" *ngIf="supportingDocUrl.length < 5">
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="input-supporting" (change)="onFileSelect($event,6)">
+                          <label class="custom-file-label" #labelSupporting for="input-supporting" aria-describedby="input-supporting-addon">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            -->
+
           </form>
         </div>
+
         <div class="card-footer">
           <button *ngIf="!isLoad" type="submit" class="btn btn-sm btn-primary" (click)="submitEmployee()"><i class="cil-save"></i> Save</button>
           <button *ngIf="isLoad"  class="btn btn-sm btn-primary" type="button">
@@ -59,116 +181,9 @@
         </div>
       </div>
     </div>
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <strong>Attachment</strong>
-        </div>
-        <div class="card-body">
-          <form action="" method="post" class="form-horizontal">
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="cv">CV Candidate</label>
-              <div class="input-group col-md-9" *ngIf="!isAnyCv">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="input-cv" (change)="onFileSelect($event,0)">
-                  <label class="custom-file-label" #labelCv for="input-cv" aria-describedby="input-cv-addon">Choose file</label>
-                </div>
-              </div>
-              <div class="input-group col-md-9 " *ngIf="isAnyCv">
-                <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(cvUrl)"><i class="fa fa-eye"></i> View</button>
-                &nbsp;
-                <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'cv')">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="skck">SKCK</label>
-              <div class="input-group col-md-9"  *ngIf="!isAnySkck">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="input-skck" (change)="onFileSelect($event,1)">
-                  <label class="custom-file-label" #labelSkck for="input-skck" aria-describedby="input-skck-addon">Choose file</label>
-                </div>
-              </div>
-              <div class="input-group col-md-9" *ngIf="isAnySkck">
-                <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(skckUrl)"><i class="fa fa-eye"></i> View</button>
-                &nbsp;
-                <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'skck')">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="agreement">Agreement Contract</label>
-              <div class="input-group col-md-9"  *ngIf="!isAnyAgreement">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="input-agreement" (change)="onFileSelect($event,2)">
-                  <label class="custom-file-label" #labelAgreement for="input-agreement" aria-describedby="input-agreement-addon">Choose file</label>
-                </div>
-              </div>
-              <div class="input-group col-md-9" *ngIf="isAnyAgreement">
-                <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(agreementUrl)"><i class="fa fa-eye"></i> View</button>
-                &nbsp;
-                <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'agreement')">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="assesment">Assesment</label>
-              <div class="input-group col-md-9"  *ngIf="!isAnyAssessment">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="input-assesment" (change)="onFileSelect($event,3)">
-                  <label class="custom-file-label" #labelAssesment for="input-assesment" aria-describedby="input-assesment-addon">Choose file</label>
-                </div>
-              </div>
-              <div class="input-group col-md-9" *ngIf="isAnyAssessment">
-                <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(assessmentUrl)"><i class="fa fa-eye"></i> View</button>
-                &nbsp;
-                <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'assesment')">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="certificate">Certificate of Employee</label>
-              <div class="input-group col-md-9"  *ngIf="!isAnyCertificate">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="input-certificate" (change)="onFileSelect($event,4)">
-                  <label class="custom-file-label" #labelCertificate for="input-certificate" aria-describedby="input-certificate-addon">Choose file</label>
-                </div>
-              </div>
-              <div class="input-group col-md-9" *ngIf="isAnyCertificate">
-                <button class="btn btn-sm btn-ghost-success" (click)="openAttachment(certificateUrl)"><i class="fa fa-eye"></i> View</button>
-                &nbsp;
-                <button class="btn btn-md btn-ghost-danger " (click)="openConfirm(cfmdlg, 'certificate')">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="y-assesment">Yearly Assesment</label>
-              <div class="input-group col-md-9">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="input-y-assesment" (change)="onFileSelect($event,5)">
-                  <label class="custom-file-label" #labelYAssesment for="input-y-assesment" aria-describedby="input-y-assesment-addon">Choose file</label>
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label" for="supporting">Other Supporting Doc.</label>
-              <div class="input-group col-md-9">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="input-supporting" (change)="onFileSelect($event,6)">
-                  <label class="custom-file-label" #labelSupporting for="input-supporting" aria-describedby="input-supporting-addon">Choose file</label>
-                </div>
-              </div>
-            </div>
-
-          </form>
-        </div>
-        <div class="card-footer">
-          <button *ngIf="!isUploading" type="submit" class="btn btn-sm btn-primary" (click)="submitAttachment()"><i class="cil-arrow-thick-from-bottom"></i> Upload</button>
-          <button *ngIf="isUploading"  class="btn btn-sm btn-primary" type="button">
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            Upload in progress...
-          </button>
-          <button type="reset" class="btn btn-sm btn-danger" (click)="reloadCurrentRoute()"><i class="fa fa-ban"></i> Clear</button>
-        </div>
-      </div>
-    </div><!--/.col-->
-  </div><!--/.row-->
+  </div>
 </div>
+
 
 <ng-template #cfmdlg>
   <div class="modal-body text-center">

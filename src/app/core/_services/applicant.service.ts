@@ -40,12 +40,8 @@ export class ApplicantService {
     return this.http.get(imageUrl, { responseType: 'blob' })
   }
 
-  saveEmployee(model : HApplicantEdit) {
+  saveEmployee(model : any) {
     return this.http.post(this.baseUrl + 'applicant/update-employee', model);
-  }
-
-  saveAttachment(model : any) {
-    return this.http.post(this.baseUrl + 'applicant/update-attachment', model);
   }
 
   deleteAttachment(id, kind) {

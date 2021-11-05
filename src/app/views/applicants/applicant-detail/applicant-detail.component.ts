@@ -53,12 +53,17 @@ export class ApplicantDetailComponent implements OnInit {
   isAnyAgreement: boolean = false
   isAnyAssessment: boolean = false
   isAnyCertificate: boolean = false
+  isAnyYearlyAssessment: boolean = false
+  isAnySupportingDoc: boolean = false
 
+  rootUrl: any = environment.attachmentUrl
   cvUrl: any = environment.attachmentUrl //+ "candidate_cv/"
   skckUrl: any = environment.attachmentUrl //+ "skck/"
   agreementUrl: any = environment.attachmentUrl //+ "agreement_contract/"
   assessmentUrl: any = environment.attachmentUrl //+ "assessment/"
   certificateUrl: any = environment.attachmentUrl //+ "certificate_employee/"
+  yearlyAssessmentUrl: string[] = []
+  supportingDocUrl: string[] = []
 
 
   public bcum: any = { title:'Applicants Detailxxx'};
@@ -72,7 +77,7 @@ export class ApplicantDetailComponent implements OnInit {
   attachment: any = {}
   setAttachment: any = {}
   editModelData: any = {}//HApplicantEdit
-  editApplocantData: any = {} // HApplicantEdit = { id : null, name : null, nik: null, join_date: null, employee: { id: null, nik: null, applicant_id: null, join_date: null, end_probation: null, create_at: null, create_by: null, update_at: null, update_by: null}, attachment: { id: null, applicant_id: null, candidate_cv: null, skck: null, agreement_contract: null, assessment: null, certificate_employee: null, yearly_assessment: null, supporting_doc: null}}
+  editApplicantData: any = {} // HApplicantEdit = { id : null, name : null, nik: null, join_date: null, employee: { id: null, nik: null, applicant_id: null, join_date: null, end_probation: null, create_at: null, create_by: null, update_at: null, update_by: null}, attachment: { id: null, applicant_id: null, candidate_cv: null, skck: null, agreement_contract: null, assessment: null, certificate_employee: null, yearly_assessment: null, supporting_doc: null}}
   attachment_kind: string = ""
 
   constructor(private _applicantSvc: ApplicantService,
@@ -97,8 +102,8 @@ export class ApplicantDetailComponent implements OnInit {
 
         if (this.person.employee != null) {
           this.employee = this.person.employee
-          this.employee.join_date = this.employee.join_date === undefined || this.employee.join_date === null ? "" : this.employee.join_date.split('T')[0];
-          this.employee.end_probation = this.employee.end_probation === undefined || this.employee.end_probation === null ? "" : this.employee.end_probation.split('T')[0];
+          this.employee.join_date = this.employee.join_date === undefined || this.employee.join_date === null ? null : this.employee.join_date.split('T')[0];
+          this.employee.end_probation = this.employee.end_probation === undefined || this.employee.end_probation === null ? null : this.employee.end_probation.split('T')[0];
         }
 
         if (this.person.attachment != null) {
@@ -110,12 +115,23 @@ export class ApplicantDetailComponent implements OnInit {
           this.isAnyAgreement = this.attachment.agreement_contract !== null ? true : false
           this.isAnyAssessment = this.attachment.assessment !== null ? true : false
           this.isAnyCertificate = this.attachment.certificate_employee !== null ? true : false
+          this.isAnyYearlyAssessment = this.attachment.yearly_assessment !== null ? true : false
+          this.isAnySupportingDoc = this.attachment.supporting_doc !== null ? true : false
 
           this.cvUrl = this.cvUrl + this.attachment.candidate_cv
           this.skckUrl = this.skckUrl + this.attachment.skck
           this.agreementUrl = this.agreementUrl + this.attachment.agreement_contract
           this.assessmentUrl = this.assessmentUrl + this.attachment.assessment
           this.certificateUrl = this.certificateUrl + this.attachment.certificate_employee
+
+          console.log('yas : ' , this.attachment.yearly_assessment)
+
+          if (this.attachment.yearly_assessment !== null ) {
+            this.yearlyAssessmentUrl = JSON.parse(this.attachment.yearly_assessment)
+          }
+          if (this.attachment.supporting_doc !== null ) {
+            this.supportingDocUrl = JSON.parse(this.attachment.supporting_doc)
+          }
 
         }
         //var parjes = JSON.stringify(this.person)
@@ -168,27 +184,27 @@ export class ApplicantDetailComponent implements OnInit {
           switch(kind) {
             case 0:
               this.labelCv.nativeElement.innerText = fileToUpload.name
-              this.setAttachment.cv_fileName = fileToUpload.name
+              this.setAttachment.cv_fileName = fileToUpload.name //not really used
               this.base64_cv = event.target.result
               break;
             case 1:
               this.labelSkck.nativeElement.innerText = fileToUpload.name
-              this.setAttachment.skck_fileName = fileToUpload.name
+              this.setAttachment.skck_fileName = fileToUpload.name //not really used
               this.base64_skck = event.target.result
               break;
             case 2:
               this.labelAgreement.nativeElement.innerText = fileToUpload.name
-              this.setAttachment.agreement_fileName = fileToUpload.name
+              this.setAttachment.agreement_fileName = fileToUpload.name //not really used
               this.base64_agreement = event.target.result
               break;
             case 3:
               this.labelAssesment.nativeElement.innerText = fileToUpload.name
-              this.setAttachment.assessment_fileName = fileToUpload.name
+              this.setAttachment.assessment_fileName = fileToUpload.name //not really used
               this.base64_assessment = event.target.result
               break;
             case 4:
               this.labelCertificate.nativeElement.innerText = fileToUpload.name
-              this.setAttachment.certificate_fileName = fileToUpload.name
+              this.setAttachment.certificate_fileName = fileToUpload.name //not really used
               this.base64_certificate = event.target.result
               break;
             case 5:
@@ -226,33 +242,14 @@ export class ApplicantDetailComponent implements OnInit {
 
   submitEmployee() {
     this.isLoad = true
-    this.editApplocantData.id = this.person.id
-    this.editApplocantData.name = this.person.name.trim()
-    this.editApplocantData.nik = this.employee.nik
-    this.editApplocantData.join_date = this.employee.join_date
+    this.editApplicantData.id = this.person.id
+    this.editApplicantData.name = this.person.name.trim()
+    this.editApplicantData.nik = this.employee.nik
+    this.editApplicantData.join_date = this.employee.join_date
     this.employee.applicant_id = this.person.id
-    this.editApplocantData.employee = this.employee
-    console.log(this.editApplocantData)
+    this.editApplicantData.employee = this.employee
 
-    this._applicantSvc.saveEmployee(this.editApplocantData).subscribe(
-      (res: any) => {
-        console.log(res)
-        this.toastr.success('Saving successful', 'Saved.!')
-        this.isLoad = false
-        //this.reloadCurrentRoute()
-      },
-      (error) => {
-        this.toastr.error("Uncaught error", "Error")
-        console.log("Error: " , error);
-        this.isLoad = false
-      }
-    )
-  }
-
-  submitAttachment() {
-    this.isUploading = true
     this.setAttachment.applicant_id = this.person.id
-
     if (this.base64_cv != null) {
       this.setAttachment.candidate_cv = this.base64_cv
     }
@@ -274,31 +271,41 @@ export class ApplicantDetailComponent implements OnInit {
     if (this.base64_supporting != null) {
       this.setAttachment.supporting_doc = this.base64_supporting
     }
+    this.editApplicantData.attachment = this.setAttachment
+    console.log("submit: ", this.editApplicantData)
 
-    console.log(this.setAttachment)
-    this._applicantSvc.saveAttachment(this.setAttachment).subscribe(
+    this._applicantSvc.saveEmployee(this.editApplicantData).subscribe(
       (res: any) => {
         console.log(res)
         this.toastr.success('Saving successful', 'Saved.!')
-        this.isUploading = false
+        this.isLoad = false
         this.reloadCurrentRoute()
       },
       (error) => {
         this.toastr.error("Uncaught error", "Error")
         console.log("Error: " , error);
-        this.isUploading = false
+        this.isLoad = false
       }
     )
   }
+
 
   openAttachment(url: any) {
     window.open(url,'Attachment','width=800,height=700')
     //this.router.navigate(['/pdf/'+id.toString()]);
   }
 
+  fileName(url) {
+    return url.split('_').pop()
+  }
+
   openConfirm(template: TemplateRef<any>, kind) {
     this.cfmref = this.modalService.show(template, {class: 'modal-sm'});
     this.attachment_kind = kind
+  }
+
+  closeThisPage() {
+    window.close()
   }
 
   confirm(): void {

@@ -386,7 +386,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
                 body: [
                   [{image:  this.foto , fit: [85, 118], alignment: 'center',}],
                   [{text: 'NIK: ' + (this.person.employee === null ? '-' : this.person.employee.nik), style: 'sectionContent'}],
-                  [{text: 'TMB: ' + (this.person.employee === null ? '-' : new Date(this.person.employee.join_date).toLocaleDateString()), style: 'sectionContent'}],
+                  [{text: 'TMB: ' + (this.person.employee === null ? '-' : this.person.employee.join_date === null ? '-' : new Date(this.person.employee.join_date).toLocaleDateString()), style: 'sectionContent'}],
                 ]
               }
               //text: 'Foroo'
