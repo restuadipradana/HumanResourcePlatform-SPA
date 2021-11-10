@@ -170,6 +170,7 @@ export class ApplicantDetailComponent implements OnInit {
     console.log(title)
     console.log(fileZise)
     reader.onload = (event) => {
+      //console.log(event.target.result)
 
       if (title == "jpg" ||
         title == "jpeg" ||
@@ -180,7 +181,6 @@ export class ApplicantDetailComponent implements OnInit {
         title == "pdf" ||
         title == "PDF") {
         if (fileZise <= 2306867) { //2.2MB
-          //console.log(event.target.result)
           switch(kind) {
             case 0:
               this.labelCv.nativeElement.innerText = fileToUpload.name

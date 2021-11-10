@@ -164,11 +164,11 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
     )
   }
 
-  clickRow(id: number){
+  clickRow(id: number){  //click edit
     //this.router.navigateByUrl('/applicants/d/'+id, { state: {data: {title: 'Wehehe'} }});
     //this.router.navigate(['/applicants/'+id],  { state: {data: {title: 'Wehehe'} }});
     //this.router.navigate(['/applicants/'+id ], { state: this.bcum });
-    const url = '#/applicants/' + id
+    const url = '#/applicants/detail/' + id
     window.open(url, '_blank');
   }
 
@@ -691,7 +691,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
 
 /* -------------- IMAGE PDF RESOURCE BEGIN ------------------ */
 
-  async getPhoto(url, kind) { //buggy - no use --
+  async getPhoto(url, kind) {
     console.log(2)
     await this._applicantSvc.getImgStat(url).then(
       () => {

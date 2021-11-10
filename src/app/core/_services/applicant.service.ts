@@ -48,6 +48,10 @@ export class ApplicantService {
     return this.http.post(this.baseUrl + 'applicant/delete-attachment', {applicant_id: id, kind: kind}, {});
   }
 
+  uploadApplicant(data: any) {
+    return this.http.post(this.baseUrl + 'applicant/upload', data, {reportProgress: true, observe: 'events'});
+  }
+
   // checkImageExist(url: string) {
   //   return this.http.request(new Request(url))
   //           .map((res: Response) => {

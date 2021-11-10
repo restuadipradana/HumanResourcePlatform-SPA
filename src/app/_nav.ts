@@ -6,11 +6,11 @@ export const navItems: INavData[] = [
     url: '/',
     icon: 'icon-note',
     children: [
-      // {
-      //   name: '1.1 Device',
-      //   url: '/temperature/maintain-device',
-      //   class: "menu-margin"
-      // },
+      {
+        name: '1.1 Upload',
+        url: '/applicants/upload',
+        class: "menu-margin"
+      },
       // {
       //   name: '1.2 Location',
       //   url: '/temperature/maintain-location',

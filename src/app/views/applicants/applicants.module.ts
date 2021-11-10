@@ -9,16 +9,20 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { IconModule } from '@coreui/icons-angular';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { AlertModule } from 'ngx-bootstrap/alert';
+import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 
 import { ApplicantsRoutingModule } from './applicants-routing.module';
 import { ApplicantComponent } from './applicant/applicant.component';
 import { ApplicantDetailComponent } from './applicant-detail/applicant-detail.component';
+import { UploadComponent } from './upload/upload.component';
 
 
 @NgModule({
   declarations: [
     ApplicantComponent,
-    ApplicantDetailComponent
+    ApplicantDetailComponent,
+    UploadComponent
   ],
   imports: [
     CommonModule,
@@ -31,7 +35,9 @@ import { ApplicantDetailComponent } from './applicant-detail/applicant-detail.co
     BsDropdownModule.forRoot(),
     IconModule,
     TooltipModule.forRoot(),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    AlertModule.forRoot(),
+    ProgressbarModule.forRoot(),
   ]
 })
 export class ApplicantsModule { }
