@@ -116,7 +116,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
           this.spinner.hide()
         },
         (error) => {
-          console.log("Error: " , error.error.text);
+          console.log("Error: " , error.error);
           this.spinner.hide()
         }
       );

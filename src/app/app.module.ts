@@ -47,10 +47,19 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ChartsModule } from 'ng2-charts';
 import { PdfViewComponent } from './views/pdf-view/pdf-view.component';
+import { FormsModule } from '@angular/forms';
+import { JwtModule } from "@auth0/angular-jwt";
+import { AuthService } from './core/_services/auth.service';
+import { AuthGuard } from './core/guards/auth.guard';
+
+export function tokenGetter() {
+  return localStorage.getItem("token");
+}
 
 @NgModule({
   imports: [
     HttpClientModule,
+    FormsModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
@@ -73,6 +82,15 @@ import { PdfViewComponent } from './views/pdf-view/pdf-view.component';
       resetTimeoutOnDuplicate: true
     }),
     NgxSpinnerModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        ///allowedDomains: ["localhost:5000"],
+        //disallowedRoutes: ["localhost:5000/api/auth"],
+        allowedDomains: ['10.11.0.119:5100'],
+        disallowedRoutes: ['10.11.0.119:5100/api/auth'],
+      },
+    }),
   ],
   declarations: [
     AppComponent,
@@ -84,6 +102,8 @@ import { PdfViewComponent } from './views/pdf-view/pdf-view.component';
     PdfViewComponent
   ],
   providers: [
+    AuthService,
+    AuthGuard,
     {
       provide: LocationStrategy,
       useClass: HashLocationStrategy

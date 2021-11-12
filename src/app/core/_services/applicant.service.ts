@@ -17,19 +17,19 @@ export class ApplicantService {
 
   getApplicantList(search: HApplicantSearch) {
     console.log("search", search)
-    return this.http.post(this.baseUrl + 'applicant/search', search);
+    return this.http.post(this.baseUrl + 'applicant/search', search, { headers: new HttpHeaders({Authorization: "Bearer " + localStorage.getItem("token")})});
   }
 
   esportExcel(search: HApplicantSearch) {
-    return this.http.post(this.baseUrl + 'applicant/excel',{paramx: search},{responseType: 'blob' })
+    return this.http.post(this.baseUrl + 'applicant/excel',{paramx: search},{responseType: 'blob' , headers: new HttpHeaders({Authorization: "Bearer " + localStorage.getItem("token")})})
   }
 
   getPerson(id: string){
-    return this.http.get<any>(this.baseUrl + 'applicant/person', {params : {id:id}})
+    return this.http.get<any>(this.baseUrl + 'applicant/person', {params : {id:id} , headers: new HttpHeaders({Authorization: "Bearer " + localStorage.getItem("token")})})
   }
 
   async getImgStat(url: string){
-    return this.http.get<any>(url, {}).toPromise();
+    return this.http.get<any>(url, { headers: new HttpHeaders({Authorization: "Bearer " + localStorage.getItem("token")})}).toPromise();
   }
 
   async getPersonAsync(id: string){ //deprecated
@@ -37,19 +37,28 @@ export class ApplicantService {
   }
 
   getImage(imageUrl: string): Observable<Blob> {
-    return this.http.get(imageUrl, { responseType: 'blob' })
+    return this.http.get(imageUrl, { responseType: 'blob', headers: new HttpHeaders({Authorization: "Bearer " + localStorage.getItem("token")}) })
   }
 
   saveEmployee(model : any) {
-    return this.http.post(this.baseUrl + 'applicant/update-employee', model);
+    return this.http.post(this.baseUrl + 'applicant/update-employee', model, this.getToken());
   }
 
   deleteAttachment(id, kind) {
-    return this.http.post(this.baseUrl + 'applicant/delete-attachment', {applicant_id: id, kind: kind}, {});
+    return this.http.post(this.baseUrl + 'applicant/delete-attachment', {applicant_id: id, kind: kind}, {headers: new HttpHeaders({Authorization: "Bearer " + localStorage.getItem("token")})});
   }
 
   uploadApplicant(data: any) {
-    return this.http.post(this.baseUrl + 'applicant/upload', data, {reportProgress: true, observe: 'events'});
+    return this.http.post(this.baseUrl + 'applicant/upload', data, {reportProgress: true, observe: 'events', headers: new HttpHeaders({Authorization: "Bearer " + localStorage.getItem("token")})});
+  }
+
+  getToken() { //send token header for request to authorized cpntoler
+    let httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      }),
+    };
+    return httpOptions;
   }
 
   // checkImageExist(url: string) {
@@ -71,5 +80,7 @@ export class ApplicantService {
   //           .subscribe(res => {...},
   //                      err => {console.log(err)} );
   // }
+
+
 
 }

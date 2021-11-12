@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:5000/api/',
-  photoUrl: 'http://localhost:5000/applicant/',
-  ktpUrl: 'http://localhost:5000/applicant/ktp/',
+  apiUrl: 'http://10.11.0.119:5100/api/',
+  photoUrl: 'http://10.11.0.119:5100/applicant/',
+  ktpUrl: 'http://10.11.0.119:5100/applicant/ktp/',
+  attachmentUrl: 'http://10.11.0.119:5100/applicant/attachment/',
 };

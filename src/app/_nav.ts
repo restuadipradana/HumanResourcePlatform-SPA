@@ -1,6 +1,21 @@
 import { INavData } from '@coreui/angular';
+import { Injectable } from "@angular/core";
+
+
 
 export const navItems: INavData[] = [
+  {
+    name: '0. Settings',
+    url: '/',
+    icon: 'icon-wrench',
+    children: [
+      {
+        name: '0.1 User',
+        url: '/settings/users',
+        class: "menu-margin"
+      },
+    ]
+  },
   {
     name: '1. Maintain',
     url: '/',
@@ -11,16 +26,6 @@ export const navItems: INavData[] = [
         url: '/applicants/upload',
         class: "menu-margin"
       },
-      // {
-      //   name: '1.2 Location',
-      //   url: '/temperature/maintain-location',
-      //   class: "menu-margin"
-      // },
-      // {
-      //   name: '1.3 Device Location',
-      //   url: '/temperature/maintain-dl',
-      //   class: "menu-margin"
-      // },
     ]
   },
   {
@@ -40,11 +45,6 @@ export const navItems: INavData[] = [
     url: '/',
     icon: 'icon-chart',
     children: [
-      // {
-      //   name: '3.1 Kanban',
-      //   url: '/temperature/kanban',
-      //   class: "menu-margin"
-      // },
     ]
   },
   {
@@ -52,11 +52,6 @@ export const navItems: INavData[] = [
     url: '/',
     icon: 'icon-docs',
     children: [
-      // {
-      //   name: '3.1 Kanban',
-      //   url: '/temperature/kanban',
-      //   class: "menu-margin"
-      // },
     ]
   },
   {
@@ -64,15 +59,105 @@ export const navItems: INavData[] = [
     url: '/',
     icon: 'icon-magnifier',
     children: [
-      // {
-      //   name: '5.1 Query',
-      //   url: '/temperature/query',
-      //   class: "menu-margin"
-      // },
     ]
   },
+];
 
+@Injectable({
+  providedIn: "root", // <- ADD THIS
+})
 
+export class NavItem {
+  navItems: INavData[] = [];
+  hasSettings: boolean;
+
+  constructor() {}
+  getNav(user: any) {
+
+    this.navItems = [];
+    this.hasSettings = false;
+
+    if( user == null) return [    ];
+
+    const navItemSettings = {
+      name: '0. Settings',
+      url: '/settings',
+      icon: 'icon-wrench',
+      children: [],
+    };
+
+    const navItemMaintain = {
+      name: '1. Maintain',
+      url: '/maintain',
+      icon: 'icon-note',
+      children: [],
+    };
+
+    const navItemTransaction = {
+      name: '2. Transaction',
+      url: '/transaction',
+      icon: 'icon-grid',
+      children: [],
+    };
+
+    const navItemKanban = {
+      name: '3. Kanban',
+      url: '/kanban',
+      icon: 'icon-chart',
+      children: [],
+    };
+
+    const navItemReport = {
+      name: '4. Report',
+      url: '/report',
+      icon: 'icon-docs',
+      children: [],
+    };
+
+    const navItemQuery = {
+      name: '5. Query',
+      url: '/query',
+      icon: 'icon-magnifier',
+      children: [],
+    };
+
+    if(user != null) {
+      user.role.forEach((element) => {
+        if (element === "admin") {
+          this.hasSettings = true;
+          const children01 = {
+            name: '0.1 User',
+            url: '/settings/users',
+            class: "menu-margin"
+          };
+          const children11 = {
+            name: '1.1 Upload',
+            url: '/applicants/upload',
+            class: "menu-margin"
+          };
+          const children21 = {
+            name: '2.1 Applicants',
+            url: '/applicants',
+            class: "menu-margin"
+          };
+          navItemSettings.children.push(children01);
+          navItemMaintain.children.push(children11);
+          navItemTransaction.children.push(children21);
+        }
+      })
+    }
+    if(this.hasSettings){
+      this.navItems.push(navItemSettings);
+    }
+    this.navItems.push(navItemMaintain);
+    this.navItems.push(navItemTransaction);
+    this.navItems.push(navItemKanban);
+    this.navItems.push(navItemReport);
+    this.navItems.push(navItemQuery);
+
+    return this.navItems;
+  }
+}
 
 
 
@@ -325,4 +410,4 @@ export const navItems: INavData[] = [
     variant: 'danger',
     attributes: { target: '_blank', rel: 'noopener' }
   } */
-];
+

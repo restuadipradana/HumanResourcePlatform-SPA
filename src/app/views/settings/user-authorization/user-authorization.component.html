@@ -1,0 +1,133 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <button type="button" class="btn btn-primary " (click)="openModalAdd()">
+            <i class="fa fa-plus"></i> Add User
+          </button>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="listsUser?.length != 0">
+              <tr *ngFor="let data of listsUser">
+                <td>{{ data.account }}</td>
+                <td>{{ data.name }}</td>
+                <td>
+                  <button type="button" class="btn btn-warning btn-sm" (click)="getUserDetail(data.account, data.name)">
+                    <i class="fa fa-pencil"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div bsModal #createModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add User</h4>
+        <button type="button" class="close" (click)="createModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md">
+            <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+
+              <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">User Name</label>
+                <div class="col-md-9">
+                  <input type="text" (keyup)="checkUser()" [(ngModel)]="userAuthorizationAccount" id="text-input" name="text-input" class="form-control" placeholder="U + IDnumber">
+                  <span class="help-block">example: U00321</span>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 col-form-label">Roles</label>
+                <div class="col-md-9 col-form-label">
+                  <div class="form-check" *ngFor="let data of listRoleByUser">
+                    <input class="form-check-input" type="checkbox" id="{{data.roleName}}" [(ngModel)]="data.status" [ngModelOptions]="{standalone: true}">
+                    <label class="form-check-label" for="{{data.roleName}}">
+                      {{ data.roleName }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div><!--/.row-->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="createModal.hide()">Close</button>
+        <button type="button" class="btn btn-primary" [disabled]="!btnSave" (click)="saveAuthorizationUser()">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div bsModal #editModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Edit User</h4>
+        <button type="button" class="close" (click)="editModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md">
+            <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+
+              <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">User Name</label>
+                <div class="col-md-9">
+                  <input type="text" id="disabled-input" name="text-input" class="form-control" [ngModel]="userAuthorizationAccount" disabled>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="disabled-input">Name</label>
+                <div class="col-md-9">
+                  <input type="text" id="disabled-input" name="disabled-input" class="form-control" [ngModel]="userAuthorizationName" disabled>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 col-form-label">Roles</label>
+                <div class="col-md-9 col-form-label">
+                  <div class="form-check" *ngFor="let data of listRoleByUser">
+                    <input class="form-check-input" type="checkbox" id="{{data.roleName}}" [(ngModel)]="data.status" [ngModelOptions]="{standalone: true}">
+                    <label class="form-check-label" for="{{data.roleName}}">
+                      {{ data.roleName }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div><!--/.row-->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="editModal.hide()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveAuthorizationUser()">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
