@@ -8,6 +8,7 @@ export class HApplicantSearch {
   education: number
   experience: number
   tel_hp: string
+  join_date: string
 
 
 }

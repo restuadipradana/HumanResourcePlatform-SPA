@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
 import { ApplicantService } from '../../../core/_services/applicant.service';
 import { DOCUMENT } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-upload',
@@ -11,6 +12,8 @@ import { HttpEventType } from '@angular/common/http';
 export class UploadComponent implements OnInit {
 
   constructor(private _applicantSvc: ApplicantService,  @Inject(DOCUMENT) private _document: Document) { }
+
+  urlExcel: any = environment.sampleFileUrl
 
   dynamic: number;
   alertsDismiss: any = [];
@@ -28,6 +31,24 @@ export class UploadComponent implements OnInit {
       type: tipe,
       msg: message,
       timeout: 6000
+    });
+  }
+
+  downloadExample() {
+    let url = this.urlExcel + 'UploadFromatGoogleForm.xlsx'
+    let namafile = 'UploadFromatGoogleForm.xlsx'
+    this._applicantSvc.getImage(url).subscribe((result: Blob) => {
+      const blob = new Blob([result]);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const currentTime = new Date();
+      const filename = namafile
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+    }, (error) => {
+      console.log("Error: " , error);
     });
   }
 

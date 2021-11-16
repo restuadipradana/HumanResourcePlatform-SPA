@@ -5,15 +5,7 @@ import { NgxSpinnerService } from "ngx-spinner";
 import { ToastrService } from 'ngx-toastr';
 import {ModalDirective, BsModalService, BsModalRef} from 'ngx-bootstrap/modal';
 
-
 import { ApplicantService } from '../../../core/_services/applicant.service';
-import { HApplicantSearch } from '../../../core/_models/h-applicant-search';
-import { TApplicant } from '../../../core/_models/t-applicant';
-import { TApplicantConnection } from '../../../core/_models/t-applicant-connection';
-import { TEducation } from '../../../core/_models/t-education';
-import { TApplicantSkill } from '../../../core/_models/t-applicantskill';
-import { TOccupation } from '../../../core/_models/t-occupation';
-import { HApplicantEdit } from '../../../core/_models/h-applicant-edit';
 
 @Component({
   selector: 'app-applicant-detail',
@@ -89,7 +81,7 @@ export class ApplicantDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.spinner.show()
-    console.log(this.router.url)
+    //console.log(this.router.url)
     this.getPerson(this.data_id)
   }
 
@@ -98,7 +90,7 @@ export class ApplicantDetailComponent implements OnInit {
       (res: any) => {
         this.person = {}
         this.person = res;
-        console.log(this.person);
+        //console.log(this.person);
 
         if (this.person.employee != null) {
           this.employee = this.person.employee
@@ -124,7 +116,7 @@ export class ApplicantDetailComponent implements OnInit {
           this.assessmentUrl = this.assessmentUrl + this.attachment.assessment
           this.certificateUrl = this.certificateUrl + this.attachment.certificate_employee
 
-          console.log('yas : ' , this.attachment.yearly_assessment)
+          //console.log('yas : ' , this.attachment.yearly_assessment)
 
           if (this.attachment.yearly_assessment !== null ) {
             this.yearlyAssessmentUrl = JSON.parse(this.attachment.yearly_assessment)
@@ -136,8 +128,8 @@ export class ApplicantDetailComponent implements OnInit {
         }
         //var parjes = JSON.stringify(this.person)
 
-        console.log('emp', this.employee)
-        console.log('atc', this.attachment)
+        //console.log('emp', this.employee)
+        //console.log('atc', this.attachment)
         this.spinner.hide()
       },
       (error) => {
@@ -160,15 +152,15 @@ export class ApplicantDetailComponent implements OnInit {
      */
 
     let fileToUpload = <File>event.target.files[0];
-    console.log(event.target.files[0])
+    //console.log(event.target.files[0])
     //console.log(fileToUpload)
 
     const reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]); // read file as data url
     var title = event.target.files[0].name.split(".").pop();
     var fileZise = event.target.files[0].size;
-    console.log(title)
-    console.log(fileZise)
+    //console.log(title)
+    //console.log(fileZise)
     reader.onload = (event) => {
       //console.log(event.target.result)
 
@@ -276,7 +268,7 @@ export class ApplicantDetailComponent implements OnInit {
 
     this._applicantSvc.saveEmployee(this.editApplicantData).subscribe(
       (res: any) => {
-        console.log(res)
+        //console.log(res)
         this.toastr.success('Saving successful', 'Saved.!')
         this.isLoad = false
         this.reloadCurrentRoute()
@@ -285,6 +277,10 @@ export class ApplicantDetailComponent implements OnInit {
         this.toastr.error("Uncaught error", "Error")
         console.log("Error: " , error);
         this.isLoad = false
+        if (error.status === 401)
+        {
+          this.router.navigate(["/login"]);
+        }
       }
     )
   }
@@ -312,7 +308,7 @@ export class ApplicantDetailComponent implements OnInit {
     //delete atc
     this._applicantSvc.deleteAttachment(this.person.id, this.attachment_kind).subscribe(
       (res: any) => {
-        console.log(res)
+        //console.log(res)
         this.toastr.success('Delete successful', 'Deleted.!')
         this.cfmref?.hide();
         this.reloadCurrentRoute()
@@ -320,9 +316,12 @@ export class ApplicantDetailComponent implements OnInit {
       (error) => {
         this.toastr.error("Uncaught error", "Error")
         console.log("Error: " , error);
+        if (error.status === 401)
+        {
+          this.router.navigate(["/login"]);
+        }
       }
     )
-
   }
 
   decline(): void {

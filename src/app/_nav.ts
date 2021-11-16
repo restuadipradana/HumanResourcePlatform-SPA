@@ -130,18 +130,23 @@ export class NavItem {
             url: '/settings/users',
             class: "menu-margin"
           };
+          navItemSettings.children.push(children01);
+        }
+        if (element === "UploadApplicant") {
           const children11 = {
             name: '1.1 Upload',
             url: '/applicants/upload',
             class: "menu-margin"
           };
+          navItemMaintain.children.push(children11);
+        }
+
+        if (element === "SearchApplicant") {
           const children21 = {
             name: '2.1 Applicants',
             url: '/applicants',
             class: "menu-margin"
           };
-          navItemSettings.children.push(children01);
-          navItemMaintain.children.push(children11);
           navItemTransaction.children.push(children21);
         }
       })

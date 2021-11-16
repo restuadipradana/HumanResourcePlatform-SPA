@@ -112,16 +112,20 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
           this.applicantList = res;
           this.rerender()
 
-          console.log(this.applicantList);
+          //console.log(this.applicantList);
           this.spinner.hide()
         },
         (error) => {
-          console.log("Error: " , error.error);
+          console.log("Error: " , error);
           this.spinner.hide()
+          if (error.status === 401)
+          {
+            this.router.navigate(["/login"]);
+          }
         }
       );
     }
-    console.log(this.searchModel)
+    //console.log(this.searchModel)
   }
 
   exportExcel() {
@@ -146,6 +150,13 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
           document.body.appendChild(link);
           link.click();
           this.spinner.hide()
+      },(error) => {
+        console.log("Error: " , error);
+        this.spinner.hide()
+        if (error.status === 401)
+        {
+          this.router.navigate(["/login"]);
+        }
       });
     }
   }
@@ -156,10 +167,10 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
         this.person = {}
         this.person = res;
 
-        console.log(this.person);
+        //console.log(this.person);
       },
       (error) => {
-        console.log("Error: " , error.error.text);
+        console.log("Error: " , error);
       }
     )
   }
@@ -181,8 +192,12 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
       }, //end of http request
       (error) => {
         this.toastr.error('Failed to open CV :(', 'Oops.. Something wrong..!');
-        console.log("Error: " , error.error.text);
+        console.log("Error: " , error);
         this.spinner.hide()
+        if (error.status === 401)
+        {
+          this.router.navigate(["/login"]);
+        }
       }
     )
   }
@@ -231,13 +246,17 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
           link.click();
         }, (error) => {
           this.toastr.error('No image found!', 'Error');
-          console.log("Error: " , error.error.text);
+          console.log("Error: " , error);
         });
 
       }, //end of http request
       (error) => {
         this.toastr.error('No image found!');
-        console.log("Error: " , error.error.text);
+        console.log("Error: " , error);
+        if (error.status === 401)
+        {
+          this.router.navigate(["/login"]);
+        }
       }
     )
   }
@@ -692,16 +711,16 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
 /* -------------- IMAGE PDF RESOURCE BEGIN ------------------ */
 
   async getPhoto(url, kind) {
-    console.log(2)
+    //console.log(2)
     await this._applicantSvc.getImgStat(url).then(
       () => {
       },
       async (error) => { //pasti error karna bukan blob, cuma mau dapatkan status
         if (error.status == 200) {
-          console.log(3)
+          //console.log(3)
           if (kind === 'foto') {
             this.foto =  await this.getBase64ImageFromURL(url)
-            console.log(31)
+            //console.log(31)
           }
           else if (kind === 'ktp') {
             this.ktp =  await this.getBase64ImageFromURL(url)
@@ -721,7 +740,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     )
-    console.log(5)
+    //console.log(5)
   }
 
   getBase64ImageFromURL(url) {
@@ -748,34 +767,6 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
 /* -------------- IMAGE RESOURCE END ------------------ */
 
 
-/* -------------- MODAL ENGINE BEGIN ------------------ */
-  modalOption(whatclose: number, template?: TemplateRef<any>) {
-    switch(whatclose) {
-      case 0: //confirm close yes
-        this.modalRef?.hide()
-        this.cfmmodalRef?.hide()
-        break
-      case 1: //confirm close no
-        this.cfmmodalRef?.hide()
-        break
-      case 2: //open confirm
-        this.cfmmodalRef = this.modalService.show(template, this.cfmconfig)
-        break
-      case 3: //main modal close
-        this.modalRef?.hide()
-    }
-  }
-
-  openModal(template: TemplateRef<any>, id: number) {
-    this.modalRef = this.modalService.show(template, this.config);
-    this.getPerson(id.toString())
-    console.log(id.toString())
-  }
-
-/* -------------- MODAL ENGINE END ------------------ */
-
-
-
 /* -------------- CHIP ENGINE BEGIN ------------------ */
   check() {
     this.srcChip = []
@@ -785,7 +776,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onRemove(item) {
-    console.log("removed",  item)
+    //console.log("removed",  item)
     switch(item.value) {
       case 'name':
         delete this.searchModel.name
@@ -813,6 +804,9 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
         break
       case 'experience':
         delete this.searchModel.experience
+        break
+      case 'join_date':
+        delete this.searchModel.join_date
         break
     }
   }
@@ -941,5 +935,31 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
     window.open('/#/pdf/' + id,'name','width=800,height=700')
     //this.router.navigate(['/pdf/'+id.toString()]);
   }
+
+//   /* -------------- MODAL ENGINE BEGIN ------------------ */
+//   modalOption(whatclose: number, template?: TemplateRef<any>) {
+//     switch(whatclose) {
+//       case 0: //confirm close yes
+//         this.modalRef?.hide()
+//         this.cfmmodalRef?.hide()
+//         break
+//       case 1: //confirm close no
+//         this.cfmmodalRef?.hide()
+//         break
+//       case 2: //open confirm
+//         this.cfmmodalRef = this.modalService.show(template, this.cfmconfig)
+//         break
+//       case 3: //main modal close
+//         this.modalRef?.hide()
+//     }
+//   }
+
+//   openModal(template: TemplateRef<any>, id: number) {
+//     this.modalRef = this.modalService.show(template, this.config);
+//     this.getPerson(id.toString())
+//     console.log(id.toString())
+//   }
+
+// /* -------------- MODAL ENGINE END ------------------ */
 
 }

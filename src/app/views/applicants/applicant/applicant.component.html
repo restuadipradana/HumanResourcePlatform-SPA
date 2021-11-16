@@ -41,6 +41,13 @@
                         </div>
                       </div>
                     </div>
+                    <div class="form-group row">
+                      <label class="col-md-4 col-form-label" for="joindate" style="text-align: right;"><b>Join Date</b></label>
+                      <div class="col-md-4">
+                          <input class="form-control" id="joindate" type="date" name="joindates" [(ngModel)]="searchModel.join_date" (change)=" check()">
+
+                      </div>
+                    </div>
 
                   </form>
                 </tab>
@@ -176,6 +183,7 @@
   </div>
 </div>
 
+<!--/.col
 <ng-template #templatew>
   <div class="modal-header">
     <h5 class="modal-title pull-left">{{person.name}}</h5>
@@ -193,7 +201,7 @@
         <label for="name">Name</label>
         <input type="text" [(ngModel)]="person.name" class="form-control" id="name">
       </div>
-    </div><!--/.row-->
+    </div>
     <div class="row">
       <div class="form-group col-sm-4">
         <label for="nik">NIK</label>
@@ -207,14 +215,14 @@
         <label for="probation">End Probation</label>
         <input type="date" class="form-control" id="probation">
       </div>
-    </div><!--/.row-->
+    </div>
     <hr>
     <div class="row">
       <label class="col-md-3 col-form-label" for="agrmn">Agreement Contract</label>
       <div class="col-md-9">
         <input type="file" id="agrmn" name="agrmn">
       </div>
-    </div><!--/.row-->
+    </div>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modalOption(2, cfm)">Close</button>
@@ -237,3 +245,4 @@
     <button type="button" class="btn btn-secondary" (click)="modalOption(1)">No</button>
   </div>
 </ng-template>
+-->

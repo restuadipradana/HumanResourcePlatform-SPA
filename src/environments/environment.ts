@@ -8,4 +8,5 @@ export const environment = {
   apiUrl: 'http://localhost:5000/api/',
   photoUrl: 'http://localhost:5000/applicant/',
   attachmentUrl: 'http://localhost:5000/applicant/attachment/',
+  sampleFileUrl: 'http://localhost:5000/sampleFile/',
 };
