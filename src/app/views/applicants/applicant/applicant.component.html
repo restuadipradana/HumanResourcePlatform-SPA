@@ -8,127 +8,128 @@
         <div class="card-body">
           <div class="row">
             <div class="col-md-12 mb-12">
-              <!-- Nav tabs -->
-              <tabset [justified]="true" >
-                <tab heading="Main">
-                  <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-
-                    <div class="form-group row">
-                      <label class="col-md-4 col-form-label" for="no-ktp" style="text-align: right;"><b>ID No</b></label>
-                      <div class="col-md-4">
-                        <input type="text" id="no-ktp" name="no-ktp" class="form-control" [(ngModel)]="searchModel.id_no" (keyup)=" check()" placeholder="No KTP">
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label class="col-md-4 col-form-label" for="name" style="text-align: right;"><b>Name</b></label>
-                      <div class="col-md-4">
-                        <input type="text" id="name" name="name" class="form-control" [(ngModel)]="searchModel.name" (keyup)=" check()">
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label class="col-md-4 col-form-label" for="no_hp" style="text-align: right;"><b>Telephone (HP)</b></label>
-                      <div class="col-md-4">
-                        <input type="text" id="no_hp" name="no_hp" class="form-control" [(ngModel)]="searchModel.tel_hp" (keyup)=" check()">
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label class="col-md-4 col-form-label" for="apldate" style="text-align: right;"><b>Apply Date</b></label>
-                      <div class="col-md-4">
-                        <div class="input-group input-daterange">
-                          <input class="form-control" id="apldate-s" type="date" name="apldate-s" [(ngModel)]="searchModel.applyDate_from" (change)=" check()">
-                          <span class="input-group-addon">&nbsp; to &nbsp;</span>
-                          <input class="form-control" id="apldate-e" type="date" name="apldate-e" [(ngModel)]="searchModel.applyDate_to" (change)=" check()">
+              <div class="card">
+                <div class="card-header" (click)="isCollapsed = !isCollapsed" style="cursor: pointer;">
+                  <h6> Search Condition </h6>
+                </div>
+                <div class="card-body" [collapse]="isCollapsed" [isAnimated]="true">
+                  <!-- Nav tabs -->
+                  <tabset [justified]="true" >
+                    <tab heading="Main">
+                      <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="form-group row">
+                          <label class="col-md-4 col-form-label" for="no-ktp" style="text-align: right;"><b>ID No</b></label>
+                          <div class="col-md-4">
+                            <input type="text" id="no-ktp" name="no-ktp" class="form-control" [(ngModel)]="searchModel.id_no" (keyup)=" check()" placeholder="No KTP">
+                          </div>
                         </div>
-                      </div>
+                        <div class="form-group row">
+                          <label class="col-md-4 col-form-label" for="name" style="text-align: right;"><b>Name</b></label>
+                          <div class="col-md-4">
+                            <input type="text" id="name" name="name" class="form-control" [(ngModel)]="searchModel.name" (keyup)=" check()">
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label class="col-md-4 col-form-label" for="no_hp" style="text-align: right;"><b>Telephone (HP)</b></label>
+                          <div class="col-md-4">
+                            <input type="text" id="no_hp" name="no_hp" class="form-control" [(ngModel)]="searchModel.tel_hp" (keyup)=" check()">
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label class="col-md-4 col-form-label" for="apldate" style="text-align: right;"><b>Apply Date</b></label>
+                          <div class="col-md-4">
+                            <div class="input-group input-daterange">
+                              <input class="form-control" id="apldate-s" type="date" name="apldate-s" [(ngModel)]="searchModel.applyDate_from" (change)=" check()">
+                              <span class="input-group-addon">&nbsp; to &nbsp;</span>
+                              <input class="form-control" id="apldate-e" type="date" name="apldate-e" [(ngModel)]="searchModel.applyDate_to" (change)=" check()">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label class="col-md-4 col-form-label" for="joindate" style="text-align: right;"><b>Join Date</b></label>
+                          <div class="col-md-4">
+                            <input class="form-control" id="joindate" type="date" name="joindates" [(ngModel)]="searchModel.join_date" (change)=" check()">
+                          </div>
+                        </div>
+                      </form>
+                    </tab>
+                    <tab heading="Data">
+                      <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="form-group row">
+                          <label class="col-md-4 col-form-label" for="gender" style="text-align: right;"><b>Gender</b></label>
+                          <div class="col-md-4">
+                            <select id="gender" name="gender" class="form-control" [(ngModel)]="searchModel.gender" (change)=" check()">
+                              <option value="">Please select</option>
+                              <option value="1">Male</option>
+                              <option value="2">Female</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label class="col-md-4 col-form-label" for="marital" style="text-align: right;"><b>Marital Status</b></label>
+                          <div class="col-md-4">
+                            <select id="marital" name="marital" class="form-control" [(ngModel)]="searchModel.marital" (change)=" check()">
+                              <option value="">Please select</option>
+                              <option value="1">Single</option>
+                              <option value="2">Married</option>
+                            </select>
+                          </div>
+                        </div>
+                      </form>
+                    </tab>
+                    <tab heading="Education">
+                      <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="form-group row">
+                          <label class="col-md-4 col-form-label" for="edu" style="text-align: right;"><b>Education Background</b></label>
+                          <div class="col-md-4">
+                            <select id="edu" name="edu" class="form-control" [(ngModel)]="searchModel.education" (change)=" check()">
+                              <option value="">Please select</option>
+                              <option value="1">University</option>
+                              <option value="2">Senior High School</option>
+                            </select>
+                          </div>
+                        </div>
+                      </form>
+                    </tab>
+                    <tab heading="Working Experience">
+                      <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="form-group row">
+                          <label class="col-md-4 col-form-label" for="wex" style="text-align: right;"><b>Working Experience</b></label>
+                          <div class="col-md-4">
+                            <select id="wex" name="wex" class="form-control" [(ngModel)]="searchModel.experience" (change)=" check()">
+                              <option value="">Please select</option>
+                              <option value="1">< 1</option>
+                              <option value="2">1 - 5</option>
+                              <option value="3">5 - 10</option>
+                              <option value="4">> 10</option>
+                            </select>
+                          </div>
+                        </div>
+                      </form>
+                    </tab>
+                  </tabset>
+                </div>
+                <div class="card-footer">
+                  <div class="row align-items-center">
+                    <div class="col-sm-10">
+                      <tag-input
+                        [theme]="'bootstrap'"
+                        [(ngModel)]="srcChip"
+                        [maxItems]="0"
+                        (onRemove)="onRemove($event)"
+                        placeholder=""
+                        >
+                      </tag-input>
                     </div>
-                    <div class="form-group row">
-                      <label class="col-md-4 col-form-label" for="joindate" style="text-align: right;"><b>Join Date</b></label>
-                      <div class="col-md-4">
-                          <input class="form-control" id="joindate" type="date" name="joindates" [(ngModel)]="searchModel.join_date" (change)=" check()">
-
-                      </div>
+                    <div class="col-sm-2">
+                      <button type="button" class="btn btn-block btn-primary" (click)="search()">Search</button>
                     </div>
-
-                  </form>
-                </tab>
-                <tab heading="Data">
-                  <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-                    <div class="form-group row">
-                      <label class="col-md-4 col-form-label" for="gender" style="text-align: right;"><b>Gender</b></label>
-                      <div class="col-md-4">
-                        <select id="gender" name="gender" class="form-control" [(ngModel)]="searchModel.gender" (change)=" check()">
-                          <option value="">Please select</option>
-                          <option value="1">Male</option>
-                          <option value="2">Female</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label class="col-md-4 col-form-label" for="marital" style="text-align: right;"><b>Marital Status</b></label>
-                      <div class="col-md-4">
-                        <select id="marital" name="marital" class="form-control" [(ngModel)]="searchModel.marital" (change)=" check()">
-                          <option value="">Please select</option>
-                          <option value="1">Single</option>
-                          <option value="2">Married</option>
-                        </select>
-                      </div>
-                    </div>
-                  </form>
-                </tab>
-                <tab heading="Education">
-                  <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-                    <div class="form-group row">
-                      <label class="col-md-4 col-form-label" for="edu" style="text-align: right;"><b>Education Background</b></label>
-                      <div class="col-md-4">
-                        <select id="edu" name="edu" class="form-control" [(ngModel)]="searchModel.education" (change)=" check()">
-                          <option value="">Please select</option>
-                          <option value="1">University</option>
-                          <option value="2">Senior High School</option>
-                        </select>
-                      </div>
-                    </div>
-                  </form>
-                </tab>
-                <tab heading="Working Experience">
-                  <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-                    <div class="form-group row">
-                      <label class="col-md-4 col-form-label" for="wex" style="text-align: right;"><b>Working Experience</b></label>
-                      <div class="col-md-4">
-                        <select id="wex" name="wex" class="form-control" [(ngModel)]="searchModel.experience" (change)=" check()">
-                          <option value="">Please select</option>
-                          <option value="1">< 1</option>
-                          <option value="2">1 - 5</option>
-                          <option value="3">5 - 10</option>
-                          <option value="4">> 10</option>
-                        </select>
-                      </div>
-                    </div>
-                  </form>
-                </tab>
-              </tabset>
+                  </div>
+                </div>
+              </div>
             </div><!--/.col-->
           </div>
-          <hr>
-          <div>
-            <tag-input
-              [theme]="'bootstrap'"
-              [(ngModel)]="srcChip"
-              [maxItems]="0"
-              (onRemove)="onRemove($event)"
-              placeholder=""
-            >
-            </tag-input>
-          </div>
-          <br>
-          <div class="row align-items-center">
-            <div class="col-sm-5">
-              &nbsp;
-            </div>
-            <div class="col-sm-2">
-              <button type="button" class="btn btn-block btn-primary" (click)="search()">Search</button>
-            </div>
-          </div>
-          <hr>
+
           <div style="overflow:auto;" >
             <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover" style="width: 100%;">
               <thead>

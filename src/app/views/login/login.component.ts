@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit{
 
   login() {
     this.spinner.show();
-    console.log(this.user);
+    //console.log(this.user);
     this.authService.login(this.user).subscribe(
       next => {
       },

@@ -11,6 +11,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 import { ApplicantsRoutingModule } from './applicants-routing.module';
 import { ApplicantComponent } from './applicant/applicant.component';
@@ -38,6 +39,7 @@ import { UploadComponent } from './upload/upload.component';
     ModalModule.forRoot(),
     AlertModule.forRoot(),
     ProgressbarModule.forRoot(),
+    CollapseModule.forRoot(),
   ]
 })
 export class ApplicantsModule { }

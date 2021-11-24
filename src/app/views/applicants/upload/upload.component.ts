@@ -75,7 +75,7 @@ export class UploadComponent implements OnInit {
 
       },
       (error) => {
-        console.log("ero", error.error);
+        console.log("ero", error);
         this.showNotif(error.error, "danger");
         // setTimeout(() => {
         //   this._document.defaultView.location.reload();

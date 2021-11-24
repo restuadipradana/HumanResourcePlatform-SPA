@@ -16,7 +16,7 @@ export class ApplicantService {
   constructor(private http: HttpClient) { }
 
   getApplicantList(search: HApplicantSearch) {
-    console.log("search", search)
+    //console.log("search", search)
     return this.http.post(this.baseUrl + 'applicant/search', search, { headers: new HttpHeaders({Authorization: "Bearer " + localStorage.getItem("token")})});
   }
 

@@ -42,6 +42,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
   modalRef?: BsModalRef;
   cfmmodalRef?: BsModalRef;
 
+  isCollapsed: boolean = false;
   searchModel: any = {}
   applicantList: TApplicant[] = []
   applicantConnection: TApplicantConnection[] = []
@@ -106,6 +107,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toastr.warning('Please fill search field at least one field!', 'All field empty!');
     }
     else {
+      this.isCollapsed = true
       this.spinner.show()
       this._applicantSvc.getApplicantList(this.searchModel).subscribe(
         (res: any) => {
