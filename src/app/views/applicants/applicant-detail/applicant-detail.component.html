@@ -17,7 +17,7 @@
               </div>
               <label class="col-md-1 col-form-label" for="name">Name</label>
               <div class="col-md-6">
-                <input type="text" id="name" name="name" class="form-control" [(ngModel)]="person.name">
+                <label class="col-form-label">{{person.name}}</label>
               </div>
             </div>
 
@@ -167,7 +167,337 @@
                 </div>
               </div>
             </div>
+            <hr>
 
+            <div class="row">
+              <div class=" col-md-12" >
+                <div class="row">
+                  <div class="col-md-1">
+                    <label class=" col-form-label" for="photo">Photo</label>
+                  </div>
+                  <div class="col-md-11">
+                    <div class=" row">
+                      <div class="input-group col-md-5" >
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="input-photo" (change)="fileChangeEvent($event, 0)">
+                          <label class="custom-file-label" #labelFoto for="input-photo" aria-describedby="input-photo-addon">Choose file</label>
+                        </div>
+                      </div>
+                      <div class="input-group col-md-5" >
+                        <label class=" col-form-label">* minimum image size 200 x 300 px </label>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6" *ngIf="croppedImage[0] === '' ">
+                        <img  [src]="url_foto" [default]="url_notfound" class="img" width="18%"  />
+                      </div>
+                      <div class="col-md-6" style="text-align: center;">
+                        <image-cropper
+                          [imageChangedEvent]="imageChangedEvent[0]"
+                          [maintainAspectRatio]="true"
+                          [containWithinAspectRatio]="containWithinAspectRatio[0]"
+                          [aspectRatio]="2 / 3"
+                          [resizeToWidth]="200"
+                          [cropperMinWidth]="200"
+                          [onlyScaleDown]="true"
+                          [roundCropper]="false"
+                          [canvasRotation]="canvasRotation[0]"
+                          [transform]="transform[0]"
+                          [alignImage]="'center'"
+                          [style.display]="showCropper[0] ? null : 'none'"
+                          format="png"
+                          (imageCropped)="imageCropped($event, 0)"
+                          (imageLoaded)="imageLoaded(0)"
+                          (cropperReady)="cropperReady($event, 0)"
+                          (loadImageFailed)="loadImageFailed()"
+                        ></image-cropper>
+                        <br>
+                        <div *ngIf="croppedImage[0] !== '' " >
+                          <button class="btn btn-info" (click)="rotateLeft(0)"><i class="fa fa-rotate-left"></i></button>
+                          <button class="btn btn-primary" (click)="resetImage(0)"> Reset </button>
+                          <button class="btn btn-info" (click)="rotateRight(0)"><i class="fa fa-rotate-right"></i></button>
+                        </div>
+                        <br>
+                      </div>
+                      <div class="col-md-6" style="text-align: center;" >
+                        <img
+                            [src]="croppedImage[0]"
+                            [style.border]="croppedImage[0] ? '1px solid black' : 'none'"
+                            height="60%"
+                          />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <br>
+                <div class="row">
+                  <div class="col-md-1">
+                    <label class=" col-form-label" for="ktp">KTP</label>
+                  </div>
+                  <div class="col-md-11">
+                    <div class=" row">
+                      <div class="input-group col-md-5" >
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="input-ktp" (change)="fileChangeEvent($event, 1)">
+                          <label class="custom-file-label" #labelKtp for="input-ktp" aria-describedby="input-ktp-addon">Choose image</label>
+                        </div>
+                      </div>
+                      <div class="input-group col-md-5" >
+                        <label class=" col-form-label">* minimum image size 350 x 220 px </label>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6" *ngIf="croppedImage[1] === '' ">
+                        <img  [src]="url_ktp" [default]="url_notfound" class="img" height="45%"  />
+                      </div>
+                      <div class="col-md-6" style="text-align: center;">
+
+                          <image-cropper
+                            [imageChangedEvent]="imageChangedEvent[1]"
+                            [maintainAspectRatio]="true"
+                            [containWithinAspectRatio]="containWithinAspectRatio[1]"
+                            [aspectRatio]="16 / 10"
+                            [resizeToWidth]="350"
+                            [cropperMinWidth]="350"
+                            [onlyScaleDown]="true"
+                            [roundCropper]="false"
+                            [canvasRotation]="canvasRotation[1]"
+                            [transform]="transform[1]"
+                            [alignImage]="'center'"
+                            [style.display]="showCropper[1] ? null : 'none'"
+                            format="png"
+                            (imageCropped)="imageCropped($event, 1)"
+                            (imageLoaded)="imageLoaded(1)"
+                            (cropperReady)="cropperReady($event, 1)"
+                            (loadImageFailed)="loadImageFailed()"
+                          ></image-cropper>
+                          <br>
+                          <div *ngIf="croppedImage[1] !== '' " >
+                            <button class="btn btn-info" (click)="rotateLeft(1)"><i class="fa fa-rotate-left"></i></button>
+                            <button class="btn btn-primary" (click)="resetImage(1)"> Reset </button>
+                            <button class="btn btn-info" (click)="rotateRight(1)"><i class="fa fa-rotate-right"></i></button>
+                          </div>
+                          <br>
+                      </div>
+                      <div class="col-md-6" style="text-align: center;" >
+                        <img
+                            [src]="croppedImage[1]"
+                            [style.border]="croppedImage[1] ? '1px solid black' : 'none'"
+                            height="60%"
+                          />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <br>
+                <div class="row">
+                  <div class="col-md-1">
+                    <label class=" col-form-label" for="kk">KK</label>
+                  </div>
+                  <div class="col-md-11">
+                    <div class=" row">
+                      <div class="input-group col-md-5" >
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="input-kk" (change)="fileChangeEvent($event, 2)">
+                          <label class="custom-file-label" #labelKk for="input-kk" aria-describedby="input-kk-addon">Choose image</label>
+                        </div>
+                      </div>
+                      <div class="input-group col-md-5" >
+                        <label class=" col-form-label">* minimum image size 1000 x 700 px </label>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6" *ngIf="croppedImage[2] === '' ">
+                        <img  [src]="url_kk" [default]="url_notfound" class="img" height="300px"  />
+                      </div>
+                      <div class="col-md-6" style="text-align: center;">
+
+                          <image-cropper
+                            [imageChangedEvent]="imageChangedEvent[2]"
+                            [maintainAspectRatio]="true"
+                            [containWithinAspectRatio]="containWithinAspectRatio[2]"
+                            [aspectRatio]="16 / 11"
+                            [resizeToWidth]="1000"
+                            [cropperMinWidth]="1000"
+                            [onlyScaleDown]="true"
+                            [roundCropper]="false"
+                            [canvasRotation]="canvasRotation[2]"
+                            [transform]="transform[2]"
+                            [alignImage]="'center'"
+                            [style.display]="showCropper[2] ? null : 'none'"
+                            format="png"
+                            (imageCropped)="imageCropped($event, 2)"
+                            (imageLoaded)="imageLoaded(2)"
+                            (cropperReady)="cropperReady($event, 2)"
+                            (loadImageFailed)="loadImageFailed()"
+                          ></image-cropper>
+                          <br>
+                          <div *ngIf="croppedImage[2] !== '' " >
+                            <button class="btn btn-info" (click)="rotateLeft(2)"><i class="fa fa-rotate-left"></i></button>
+                            <button class="btn btn-primary" (click)="resetImage(2)"> Reset </button>
+                            <button class="btn btn-info" (click)="rotateRight(2)"><i class="fa fa-rotate-right"></i></button>
+                          </div>
+                          <br>
+                      </div>
+                      <div class="col-md-6" style="text-align: center;" >
+                        <img
+                            [src]="croppedImage[2]"
+                            [style.border]="croppedImage[2] ? '1px solid black' : 'none'"
+                            height="300px"
+                          />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <br>
+                <div class="row">
+                  <div class="col-md-1">
+                    <label class=" col-form-label" for="npwp">NPWP</label>
+                  </div>
+                  <div class="col-md-11">
+                    <div class=" row">
+                      <div class="input-group col-md-5" >
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="input-npwp" (change)="fileChangeEvent($event, 3)">
+                          <label class="custom-file-label" #labelNpwp for="input-npwp" aria-describedby="input-npwp-addon">Choose image</label>
+                        </div>
+                      </div>
+                      <div class="input-group col-md-5" >
+                        <label class=" col-form-label">* minimum image size 350 x 220 px </label>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6" *ngIf="croppedImage[3] === '' ">
+                        <img  [src]="url_npwp" [default]="url_notfound" class="img" height="45%"  />
+                      </div>
+                      <div class="col-md-6" style="text-align: center;">
+
+                          <image-cropper
+                            [imageChangedEvent]="imageChangedEvent[3]"
+                            [maintainAspectRatio]="true"
+                            [containWithinAspectRatio]="containWithinAspectRatio[3]"
+                            [aspectRatio]="16 / 10"
+                            [resizeToWidth]="350"
+                            [cropperMinWidth]="350"
+                            [onlyScaleDown]="true"
+                            [roundCropper]="false"
+                            [canvasRotation]="canvasRotation[3]"
+                            [transform]="transform[3]"
+                            [alignImage]="'center'"
+                            [style.display]="showCropper[3] ? null : 'none'"
+                            format="png"
+                            (imageCropped)="imageCropped($event, 3)"
+                            (imageLoaded)="imageLoaded(3)"
+                            (cropperReady)="cropperReady($event, 3)"
+                            (loadImageFailed)="loadImageFailed()"
+                          ></image-cropper>
+                          <br>
+                          <div *ngIf="croppedImage[3] !== '' " >
+                            <button class="btn btn-info" (click)="rotateLeft(3)"><i class="fa fa-rotate-left"></i></button>
+                            <button class="btn btn-primary" (click)="resetImage(3)"> Reset </button>
+                            <button class="btn btn-info" (click)="rotateRight(3)"><i class="fa fa-rotate-right"></i></button>
+                          </div>
+                          <br>
+                      </div>
+                      <div class="col-md-6" style="text-align: center;" >
+                        <img
+                            [src]="croppedImage[3]"
+                            [style.border]="croppedImage[3] ? '1px solid black' : 'none'"
+                            height="60%"
+                          />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <br>
+                <div class="row">
+                  <div class="col-md-1">
+                    <label class=" col-form-label" for="ijazah">Ijazah</label>
+                  </div>
+                  <div class="col-md-11">
+                    <div class=" row">
+                      <div class="input-group col-md-5" >
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="input-ijazah" (change)="fileChangeEvent($event, 4)">
+                          <label class="custom-file-label" #labelIjazah for="input-ijazah" aria-describedby="input-ijazah-addon">Choose image</label>
+                        </div>
+                      </div>
+                      <div class="input-group col-md-5" >
+                        <label class=" col-form-label">  </label>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6" *ngIf="croppedImage[4] === '' ">
+                        <img  [src]="url_ijazah" [default]="url_notfound" class="img" height="300px"  />
+                      </div>
+                      <div class="col-md-6" style="text-align: center;">
+                        <img
+                        [src]="croppedImage[4]"
+                        [style.border]="croppedImage[4] ? '1px solid black' : 'none'"
+                        height="300px"
+                        />
+                      </div>
+                      <div class="col-md-6" style="text-align: center;" >
+                        <img
+                            [src]="croppedImage[4]"
+                            [style.border]="croppedImage[4] ? '1px solid black' : 'none'"
+                            height="300px"
+                          />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <br>
+                <div class="row">
+                  <div class="col-md-1">
+                    <label class=" col-form-label" for="vaksin">Vaksin</label>
+                  </div>
+                  <div class="col-md-11">
+                    <div class=" row">
+                      <div class="input-group col-md-5" >
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="input-vaksin" (change)="fileChangeEvent($event, 5)">
+                          <label class="custom-file-label" #labelVaksin for="input-vaksin" aria-describedby="input-vaksin-addon">Choose image</label>
+                        </div>
+                      </div>
+                      <div class="input-group col-md-5" >
+                        <label class=" col-form-label">  </label>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6" *ngIf="croppedImage[5] === '' ">
+                        <img  [src]="url_vaksin" [default]="url_notfound" class="img" height="300px"  />
+                      </div>
+                      <div class="col-md-6" style="text-align: center;">
+                        <img
+                        [src]="croppedImage[5]"
+                        [style.border]="croppedImage[5] ? '1px solid black' : 'none'"
+                        height="300px"
+                        />
+                      </div>
+                      <div class="col-md-6" style="text-align: center;" >
+                        <img
+                            [src]="croppedImage[5]"
+                            [style.border]="croppedImage[5] ? '1px solid black' : 'none'"
+                            height="300px"
+                          />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </form>
         </div>
 

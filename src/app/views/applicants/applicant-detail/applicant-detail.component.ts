@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { NgxSpinnerService } from "ngx-spinner";
 import { ToastrService } from 'ngx-toastr';
+import { ImageCroppedEvent, Dimensions, ImageTransform, base64ToFile } from 'ngx-image-cropper';
 import {ModalDirective, BsModalService, BsModalRef} from 'ngx-bootstrap/modal';
 
 import { ApplicantService } from '../../../core/_services/applicant.service';
@@ -13,6 +14,16 @@ import { ApplicantService } from '../../../core/_services/applicant.service';
   styleUrls: ['./applicant-detail.component.scss']
 })
 export class ApplicantDetailComponent implements OnInit {
+
+  //  -----------------------foto-ktp-kk-npwp-ijazah-vaksin--
+  imageChangedEvent:  any[] = ['', '', '', '', '', ''];
+  croppedImage:       any[] = ['', '', '', '', '', ''];
+  canvasRotation            = [ 0,  0,  0,  0,  0,  0];
+  rotation                  = [ 0,  0,  0,  0,  0,  0];
+  scale                     = [ 1,  1,  1,  1,  1,  1];
+  transform: ImageTransform[]=[{}, {}, {}, {}, {}, {}];
+  showCropper = [false, false, false, false, false, false];
+  containWithinAspectRatio = [false, false, false, false, false, false];
 
   cfmref?: BsModalRef;
 
@@ -31,6 +42,18 @@ export class ApplicantDetailComponent implements OnInit {
   labelYAssesment: ElementRef;
   @ViewChild('labelSupporting')
   labelSupporting: ElementRef;
+  @ViewChild('labelFoto')
+  labelFoto: ElementRef;
+  @ViewChild('labelKtp')
+  labelKtp: ElementRef;
+  @ViewChild('labelKk')
+  labelKk: ElementRef;
+  @ViewChild('labelNpwp')
+  labelNpwp: ElementRef;
+  @ViewChild('labelIjazah')
+  labelIjazah: ElementRef;
+  @ViewChild('labelVaksin')
+  labelVaksin: ElementRef;
 
   base64_cv: any = null
   base64_skck: any = null
@@ -39,6 +62,12 @@ export class ApplicantDetailComponent implements OnInit {
   base64_certificate: any = null
   base64_yearlyAssesment: any = null
   base64_supporting: any = null
+  base64_foto: any = null
+  base64_ktp: any = null
+  base64_kk: any = null
+  base64_npwp: any = null
+  base64_ijazah: any = null
+  base64_vaksin: any = null
 
   isAnyCv: boolean = false
   isAnySkck: boolean = false
@@ -57,6 +86,14 @@ export class ApplicantDetailComponent implements OnInit {
   yearlyAssessmentUrl: string[] = []
   supportingDocUrl: string[] = []
 
+  urlPhoto: any = environment.photoUrl
+  url_foto: any
+  url_ktp: any
+  url_kk: any
+  url_npwp: any
+  url_ijazah: any
+  url_vaksin: any
+  url_notfound: any = environment.photoUrl + 'noimg.png'
 
   public bcum: any = { title:'Applicants Detailxxx'};
   isLoad: boolean = false
@@ -71,6 +108,7 @@ export class ApplicantDetailComponent implements OnInit {
   editModelData: any = {}//HApplicantEdit
   editApplicantData: any = {} // HApplicantEdit = { id : null, name : null, nik: null, join_date: null, employee: { id: null, nik: null, applicant_id: null, join_date: null, end_probation: null, create_at: null, create_by: null, update_at: null, update_by: null}, attachment: { id: null, applicant_id: null, candidate_cv: null, skck: null, agreement_contract: null, assessment: null, certificate_employee: null, yearly_assessment: null, supporting_doc: null}}
   attachment_kind: string = ""
+
 
   constructor(private _applicantSvc: ApplicantService,
               private router : Router,
@@ -126,7 +164,13 @@ export class ApplicantDetailComponent implements OnInit {
           }
 
         }
-        //var parjes = JSON.stringify(this.person)
+        let nama = this.person.name.trim()
+        this.url_foto = this.urlPhoto + res.id + '.%20' + nama + '.png'
+        this.url_ktp = this.urlPhoto + 'ktp/' + res.id + '.%20' + 'KTP%20' + nama + '.png'
+        this.url_kk = this.urlPhoto + 'kk/' + res.id + '.%20' + 'KK%20' + nama + '.png'
+        this.url_npwp = this.urlPhoto + 'npwp/' + res.id + '.%20' + 'NPWP%20' + nama + '.png'
+        this.url_ijazah = this.urlPhoto + 'ijazah/' + res.id + '.%20' + 'IJAZAH%20' + nama + '.png'
+        this.url_vaksin = this.urlPhoto + 'vaksin/' + res.id + '.%20' + 'VAKSIN%20' + nama + '.png'
 
         //console.log('emp', this.employee)
         //console.log('atc', this.attachment)
@@ -263,6 +307,25 @@ export class ApplicantDetailComponent implements OnInit {
     if (this.base64_supporting != null) {
       this.setAttachment.supporting_doc = this.base64_supporting
     }
+    if (this.croppedImage[0] !== '') { //foto
+      this.setAttachment.foto = this.croppedImage[0]
+    }
+    if (this.croppedImage[1] !== '') { //ktp
+      this.setAttachment.ktp = this.croppedImage[1]
+    }
+    if (this.croppedImage[2] !== '') { //kk
+      this.setAttachment.kk = this.croppedImage[2]
+    }
+    if (this.croppedImage[3] !== '') { //npwp
+      this.setAttachment.npwp = this.croppedImage[3]
+    }
+    if (this.croppedImage[4] !== '') { //ijazah
+      this.setAttachment.ijazah = this.croppedImage[4]
+    }
+    if (this.croppedImage[5] !== '') { //vaksin
+      this.setAttachment.vaksin = this.croppedImage[5]
+    }
+
     this.editApplicantData.attachment = this.setAttachment
     console.log("submit: ", this.editApplicantData)
 
@@ -333,6 +396,142 @@ export class ApplicantDetailComponent implements OnInit {
     this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
         this.router.navigate([currentUrl]);
     });
+  }
+
+  //---------block image croper ------------
+  fileChangeEvent(event: any, kind: number): void {
+    var title = event.target.files[0].name.split(".").pop();
+    var fileZise = event.target.files[0].size;
+
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const image = new Image();
+      image.src = e.target.result;
+      image.onload = rs => {
+        const img_width = rs.currentTarget['width']; //lebar
+        const img_height = rs.currentTarget['height']; //tinggi
+        //console.log('img res ', img_width, img_height);
+        //console.log('img base ', e.target.result);
+        if (title == "jpg" || title == "jpeg" || title == "png" || title == "JPG" || title == "JPEG" || title == "PNG" ) {
+          if (fileZise <= 2306867) {
+            switch(kind) {
+              case 0: //foto
+                if (img_width > 199 && img_height > 299) {
+                  this.imageChangedEvent[kind] = event;
+                  this.labelFoto.nativeElement.innerText = this.imageChangedEvent[0].target.files[0].name
+                  break
+                }
+                else {
+                  this.toastr.warning('Minimumm image resolution is 200px x 300px')
+                  break
+                }
+              case 1: //ktp
+                if (img_width > 349 && img_height > 219) {
+                  this.imageChangedEvent[kind] = event;
+                  this.labelKtp.nativeElement.innerText = this.imageChangedEvent[1].target.files[0].name
+                  break
+                }
+                else {
+                  this.toastr.warning('Minimumm image resolution is 350px x 200px')
+                  break
+                }
+              case 2: //kk
+                if (img_width > 999 && img_height > 699) {
+                  this.imageChangedEvent[kind] = event;
+                  this.labelKk.nativeElement.innerText = this.imageChangedEvent[2].target.files[0].name
+                  break
+                }
+                else {
+                  this.toastr.warning('Minimumm image resolution is 1000px x 700px')
+                  break
+                }
+              case 3: //npwp
+                if (img_width > 349 && img_height > 219) {
+                  this.imageChangedEvent[kind] = event;
+                  this.labelKk.nativeElement.innerText = this.imageChangedEvent[3].target.files[0].name
+                  break
+                }
+                else {
+                  this.toastr.warning('Minimumm image resolution is 350px x 200px')
+                  break
+                }
+              case 4: //ijazah
+                this.imageChangedEvent[kind] = event;
+                this.croppedImage[kind] = e.target.result;
+                this.labelKk.nativeElement.innerText = this.imageChangedEvent[4].target.files[0].name
+                break
+              case 5: //vaksin
+                this.imageChangedEvent[kind] = event;
+                this.croppedImage[kind] = e.target.result;
+                this.labelKk.nativeElement.innerText = this.imageChangedEvent[5].target.files[0].name
+                break
+            }
+            console.log(this.imageChangedEvent)
+          }
+          else {
+            this.toastr.warning('File size must be under 2MB!', 'File size too big!');
+          }
+        }
+        else {
+          this.toastr.warning('File must be image', 'Wrong format!');
+        }
+      }
+    }
+    reader.readAsDataURL(event.target.files[0]);
+
+  }
+
+  imageCropped(event: ImageCroppedEvent, kind: number) {
+    this.croppedImage[kind] = event.base64;
+    //console.log(event, base64ToFile(event.base64));
+    //console.log('b evt', this.croppedImage);
+  }
+
+  imageLoaded(kind: number) {
+    this.showCropper[kind] = true;
+    console.log('Image loaded');
+  }
+
+  cropperReady(sourceImageDimensions: Dimensions, kind: number) {
+    //console.log('Cropper ready', sourceImageDimensions);
+  }
+
+  loadImageFailed() {
+    console.log('Load failed');
+  }
+
+  rotateLeft(kind: number) {
+    this.canvasRotation[kind]--;
+    this.flipAfterRotate(kind);
+  }
+
+  rotateRight(kind: number) {
+    this.canvasRotation[kind]++;
+    this.flipAfterRotate(kind);
+  }
+
+  private flipAfterRotate(kind: number) {
+    const flippedH = this.transform[kind].flipH;
+    const flippedV = this.transform[kind].flipV;
+    this.transform[kind] = {
+      ...this.transform[kind],
+      flipH: flippedV,
+      flipV: flippedH,
+    };
+  }
+
+  resetImage(kind: number) {
+    this.scale[kind] = 1;
+    this.rotation[kind] = 0;
+    this.canvasRotation[kind] = 0;
+    this.transform[kind] = {};
+  }
+
+  updateRotation(kind: number) {
+    this.transform[kind] = {
+      ...this.transform[kind],
+      rotate: this.rotation[kind],
+    };
   }
 
 }

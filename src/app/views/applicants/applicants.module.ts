@@ -12,18 +12,21 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 import { ApplicantsRoutingModule } from './applicants-routing.module';
 import { ApplicantComponent } from './applicant/applicant.component';
 import { ApplicantDetailComponent } from './applicant-detail/applicant-detail.component';
 import { UploadComponent } from './upload/upload.component';
+import { ImagePreloadDirective } from './image-preload.directive';
 
 
 @NgModule({
   declarations: [
     ApplicantComponent,
     ApplicantDetailComponent,
-    UploadComponent
+    UploadComponent,
+    ImagePreloadDirective,
   ],
   imports: [
     CommonModule,
@@ -40,6 +43,7 @@ import { UploadComponent } from './upload/upload.component';
     AlertModule.forRoot(),
     ProgressbarModule.forRoot(),
     CollapseModule.forRoot(),
+    ImageCropperModule
   ]
 })
 export class ApplicantsModule { }
