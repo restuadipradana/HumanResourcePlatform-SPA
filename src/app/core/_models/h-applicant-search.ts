@@ -1,6 +1,7 @@
 export class HApplicantSearch {
   id_no: string
   name: string
+  nik: string
   applyDate_from: string
   applyDate_to: string
   gender: number

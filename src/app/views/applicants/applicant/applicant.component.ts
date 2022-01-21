@@ -786,8 +786,8 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'id_no':
         delete this.searchModel.id_no
         break
-      case 'tel_hp':
-        delete this.searchModel.tel_hp
+      case 'nik':
+        delete this.searchModel.nik
         break
       case 'applyDate_from':
         delete this.searchModel.applyDate_from
