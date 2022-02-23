@@ -61,6 +61,10 @@ export class ApplicantService {
     return httpOptions;
   }
 
+  // getCvOldVersion(id: string) { //ga jadi dipake
+  //   return this.http.get(environment.oldCVurl + 'pdf/cv/' + id, { responseType: 'blob'})
+  // }
+
   // checkImageExist(url: string) {
   //   return this.http.request(new Request(url))
   //           .map((res: Response) => {

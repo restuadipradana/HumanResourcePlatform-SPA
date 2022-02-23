@@ -708,6 +708,11 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
     this.spinner.hide()
   }
 
+  downloadOldCv(id) {
+    const url = environment.oldCVurl + 'pdf/cv/' + id
+    window.open(url, '_blank');
+  }
+
 
 
 /* -------------- IMAGE PDF RESOURCE BEGIN ------------------ */
@@ -755,7 +760,7 @@ export class ApplicantComponent implements OnInit, OnDestroy, AfterViewInit {
         canvas.height = img.height;
         var ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
-        var dataURL = canvas.toDataURL("image/png");
+        var dataURL = canvas.toDataURL('image/png', 0.1);
         resolve(dataURL);
       };
       img.onerror = error => {

@@ -9,4 +9,5 @@ export const environment = {
   photoUrl: 'http://localhost:5000/applicant/',
   attachmentUrl: 'http://localhost:5000/applicant/attachment/',
   sampleFileUrl: 'http://localhost:5000/sampleFile/',
+  oldCVurl: 'http://localhost:51000/',
 };
