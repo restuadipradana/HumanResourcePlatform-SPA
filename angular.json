@@ -39,7 +39,10 @@
             ],
             "allowedCommonJsDependencies": [
               "chart.js",
-              "classnames"
+              "classnames",
+              "jspdf-autotable",
+              "raf",
+              "core-js"
             ]
           },
           "configurations": {
